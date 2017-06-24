@@ -13,24 +13,63 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fedor">
+      <UniqueIdentifier>{53e16e38-9ef1-4391-bbb2-37a2236dd4e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SocketLib">
+      <UniqueIdentifier>{4c05ec30-e852-44a7-9ff4-8e397685a795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SocketLib\TCP">
+      <UniqueIdentifier>{5df82e96-1981-4e7d-b5ce-0f69de630aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SocketLib\UDP">
+      <UniqueIdentifier>{360b355c-b7b7-4a1a-bf1b-b8e5bae611eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="FedorController.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="Fedor\Fedor.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketLib\SocketLib.cpp">
+      <Filter>SocketLib</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketLib\SocketException.cpp">
+      <Filter>SocketLib</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketLib\TCP\TcpClient.cpp">
+      <Filter>SocketLib\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketLib\UDP\UdpSocket.h">
+      <Filter>SocketLib\UDP</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketLib\UDP\UdpSocket.cpp">
+      <Filter>SocketLib\UDP</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketLib\TCP\TcpServer.cpp">
+      <Filter>SocketLib\TCP</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Fedor\Fedor.h">
+      <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketLib\SocketLib.h">
+      <Filter>SocketLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketLib\SocketException.h">
+      <Filter>SocketLib</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketLib\TCP\TcpClient.h">
+      <Filter>SocketLib\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketLib\TCP\TcpServer.h">
+      <Filter>SocketLib\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketLib\WindowsFix.h">
+      <Filter>SocketLib</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
