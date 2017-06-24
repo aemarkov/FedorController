@@ -147,18 +147,11 @@
     <ClCompile Include="Fedor\Fedor.cpp" />
     <ClCompile Include="SocketLib\SocketException.cpp" />
     <ClCompile Include="SocketLib\SocketLib.cpp" />
-    <ClCompile Include="SocketLib\TCP\TcpClient.cpp" />
-    <ClCompile Include="SocketLib\TCP\TcpServer.cpp" />
-    <ClCompile Include="SocketLib\UDP\UdpSocket.cpp" />
-    <ClCompile Include="SocketLib\UDP\UdpSocket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Fedor\Fedor.h" />
     <ClInclude Include="SocketLib\SocketException.h" />
     <ClInclude Include="SocketLib\SocketLib.h" />
-    <ClInclude Include="SocketLib\TCP\TcpClient.h" />
-    <ClInclude Include="SocketLib\TCP\TcpServer.h" />
-    <ClInclude Include="SocketLib\WindowsFix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

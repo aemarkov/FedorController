@@ -19,12 +19,6 @@
     <Filter Include="SocketLib">
       <UniqueIdentifier>{4c05ec30-e852-44a7-9ff4-8e397685a795}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SocketLib\TCP">
-      <UniqueIdentifier>{5df82e96-1981-4e7d-b5ce-0f69de630aa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SocketLib\UDP">
-      <UniqueIdentifier>{360b355c-b7b7-4a1a-bf1b-b8e5bae611eb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FedorController.cpp">
@@ -39,18 +33,6 @@
     <ClCompile Include="SocketLib\SocketException.cpp">
       <Filter>SocketLib</Filter>
     </ClCompile>
-    <ClCompile Include="SocketLib\TCP\TcpClient.cpp">
-      <Filter>SocketLib\TCP</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketLib\UDP\UdpSocket.h">
-      <Filter>SocketLib\UDP</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketLib\UDP\UdpSocket.cpp">
-      <Filter>SocketLib\UDP</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketLib\TCP\TcpServer.cpp">
-      <Filter>SocketLib\TCP</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Fedor\Fedor.h">
@@ -60,15 +42,6 @@
       <Filter>SocketLib</Filter>
     </ClInclude>
     <ClInclude Include="SocketLib\SocketException.h">
-      <Filter>SocketLib</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketLib\TCP\TcpClient.h">
-      <Filter>SocketLib\TCP</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketLib\TCP\TcpServer.h">
-      <Filter>SocketLib\TCP</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketLib\WindowsFix.h">
       <Filter>SocketLib</Filter>
     </ClInclude>
   </ItemGroup>

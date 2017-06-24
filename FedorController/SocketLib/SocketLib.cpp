@@ -2,8 +2,99 @@
 
 using namespace SocketLib;
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  Служебные базовые классы                                   ///
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//------------------------------------- BaseSocket ----------------------------------------------
+
+Helpers::BaseSocket::BaseSocket()
+{
+	_socket = INVALID_SOCKET;
+}
+
+Helpers::BaseSocket::~BaseSocket()
+{
+	Close();
+}
+
+//Закрывает сокет
+void Helpers::BaseSocket::Close()
+{
+	DWORD result;
+
+#ifdef _WIN32
+	result = closesocket(_socket);
+#elif __linux__
+	result = close(_socket);
+#endif
+
+	if (result == SOCKET_ERROR)
+		throw SocketException(WSAGetLastError());
+
+	_socket = INVALID_SOCKET;
+}
+
+//------------------------------------- Bindable Socket------------------------------------------
+
+void Helpers::BindableSocket::Bind(sockaddr * addr, int length)
+{
+	if (addr == NULL)
+		throw std::invalid_argument("addr is NULL");
+
+	if (bind(_socket, addr, length) == SOCKET_ERROR)
+		throw SocketException(WSAGetLastError());
+}
+
+void Helpers::BindableSocket::Bind(const char * address, int port)
+{
+	sockaddr_in addr;
+	addr.sin_addr.S_un.S_addr = inet_addr(address);
+	addr.sin_port = htons(port);
+	addr.sin_family = AF_INET;
+
+	Bind((sockaddr*)&addr, sizeof(addr));
+}
+
+void Helpers::BindableSocket::Bind(int port)
+{
+	sockaddr_in addr;
+	addr.sin_addr.S_un.S_addr = INADDR_ANY;
+	addr.sin_port = htons(port);
+	addr.sin_family = AF_INET;
+
+	Bind((sockaddr*)&addr, sizeof(addr));
+}
+
+//------------------------------------- Connectable Socket---------------------------------------
+
+//Устанавливает соединение
+void Helpers::ConnectableSocket::Connect(sockaddr* addr)
+{
+	if (connect(_socket, addr, sizeof(*addr)) == SOCKET_ERROR)
+		throw SocketException(WSAGetLastError());
+
+}
+
+//Устанавливает соединение
+void Helpers::ConnectableSocket::Connect(const char * address, int port)
+{
+	sockaddr_in addr;
+	addr.sin_addr.S_un.S_addr = inet_addr(address);
+	addr.sin_port = htons(port);
+	addr.sin_family = AF_INET;
+
+	Connect((sockaddr*)&addr);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  Socket                                                     ///
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
 //Инициализирует WinSock
-void SocketLib::Socket::Init()
+void Socket::Init()
 {
 #ifdef _WIN32
 	WSADATA wsaData;
@@ -15,38 +106,14 @@ void SocketLib::Socket::Init()
 #endif
 }
 
-SocketLib::Socket::Socket()
+Socket::Socket()
 {
-	_socket = INVALID_SOCKET;
+
 }
 
 Socket::Socket(SOCKET_TYPE socket)
 {
 	_socket = socket;
-}
-
-Socket::~Socket()
-{
-	Close();
-}
-
-//Устанавливает соединение
-void SocketLib::Socket::Connect(sockaddr* addr)
-{
-	if (connect(_socket, addr, sizeof(*addr)) == SOCKET_ERROR)
-		throw SocketException(WSAGetLastError());
-
-}
-
-//Устанавливает соединение
-void SocketLib::Socket::Connect(const char * address, int port)
-{
-	sockaddr_in addr;
-	addr.sin_addr.S_un.S_addr = inet_addr(address);
-	addr.sin_port = htons(port);
-	addr.sin_family = AF_INET;
-
-	Connect((sockaddr*)&addr);
 }
 
 //Отправляет данные
@@ -89,21 +156,71 @@ int Socket::RecvFrom(uint8_t * buffer, int length, int flags, sockaddr * from, i
 	return result;
 }
 
-//Закрывает сокет
-void Socket::Close()
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  UdpSocket                                                  ///
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+UdpSocket::UdpSocket()
 {
+	SOCKET wtf = INVALID_SOCKET;
 
-	DWORD result;
+	_socket = socket(AF_INET, SOCK_DGRAM, 0);
+	if (_socket == INVALID_SOCKET)
+		throw SocketException(WSAGetLastError());
+}
 
-#ifdef _WIN32
-	result = closesocket(_socket);
-#elif __linux__
-	result = close(_socket);
-#endif
 
-	if (result == SOCKET_ERROR)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  TcpClient                                                  ///
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+TcpClient::TcpClient()
+{
+	_socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_socket == INVALID_SOCKET)
+		throw SocketException(WSAGetLastError());
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  TcpServer                                                  ///
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+TcpServer::TcpServer()
+{
+	_socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_socket == INVALID_SOCKET)
+		throw SocketException(WSAGetLastError());
+}
+
+
+//Начинает слушать с заданным числом подключений
+void TcpServer::Listen(int maxConnectons)
+{
+	if (listen(_socket, maxConnectons) == SOCKET_ERROR)
+		throw SocketException(WSAGetLastError());
+}
+
+//Начинает слушать с максимально возможным числом подключений
+void TcpServer::Listen()
+{
+	Listen(SOMAXCONN);
+}
+
+//Принимает подключение
+Socket & TcpServer::Accept()
+{
+	sockaddr addr;
+	int length = sizeof(addr);
+	SOCKET_TYPE socket = accept(_socket, &addr, &length);
+
+	if (socket == INVALID_SOCKET)
 		throw SocketException(WSAGetLastError());
 
-	_socket = INVALID_SOCKET;
-
+	return *(new Socket(socket));
 }
