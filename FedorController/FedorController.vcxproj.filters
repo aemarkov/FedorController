@@ -19,13 +19,13 @@
     <Filter Include="SocketLib">
       <UniqueIdentifier>{4c05ec30-e852-44a7-9ff4-8e397685a795}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fedor\Data">
+      <UniqueIdentifier>{1ca6c974-f99e-4d50-8e4b-231fbe96beef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FedorController.cpp">
       <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="Fedor\Fedor.cpp">
-      <Filter>Fedor</Filter>
     </ClCompile>
     <ClCompile Include="SocketLib\SocketLib.cpp">
       <Filter>SocketLib</Filter>
@@ -33,16 +33,52 @@
     <ClCompile Include="SocketLib\SocketException.cpp">
       <Filter>SocketLib</Filter>
     </ClCompile>
+    <ClCompile Include="Fedor\AbstractGroup.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
+    <ClCompile Include="Fedor\Fedor.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
+    <ClCompile Include="Fedor\RobotGroup.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
+    <ClCompile Include="Fedor\VersionGroup.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
+    <ClCompile Include="Fedor\MotorsGroup.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
+    <ClCompile Include="Fedor\SensorsGroup.cpp">
+      <Filter>Fedor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Fedor\Fedor.h">
-      <Filter>Fedor</Filter>
-    </ClInclude>
     <ClInclude Include="SocketLib\SocketLib.h">
       <Filter>SocketLib</Filter>
     </ClInclude>
     <ClInclude Include="SocketLib\SocketException.h">
       <Filter>SocketLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Data\MotorCommand.h">
+      <Filter>Fedor\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\AbstractGroup.h">
+      <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Fedor.h">
+      <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\MotorsGroup.h">
+      <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\RobotGroup.h">
+      <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\SensorsGroup.h">
+      <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\VersionGroup.h">
+      <Filter>Fedor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

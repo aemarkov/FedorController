@@ -89,6 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,6 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,6 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,6 +137,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,12 +148,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FedorController.cpp" />
+    <ClCompile Include="Fedor\AbstractGroup.cpp" />
     <ClCompile Include="Fedor\Fedor.cpp" />
+    <ClCompile Include="Fedor\MotorsGroup.cpp" />
+    <ClCompile Include="Fedor\RobotGroup.cpp" />
+    <ClCompile Include="Fedor\SensorsGroup.cpp" />
+    <ClCompile Include="Fedor\VersionGroup.cpp" />
     <ClCompile Include="SocketLib\SocketException.cpp" />
     <ClCompile Include="SocketLib\SocketLib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Fedor\AbstractGroup.h" />
+    <ClInclude Include="Fedor\Data\MotorCommand.h" />
     <ClInclude Include="Fedor\Fedor.h" />
+    <ClInclude Include="Fedor\MotorsGroup.h" />
+    <ClInclude Include="Fedor\RobotGroup.h" />
+    <ClInclude Include="Fedor\SensorsGroup.h" />
+    <ClInclude Include="Fedor\VersionGroup.h" />
     <ClInclude Include="SocketLib\SocketException.h" />
     <ClInclude Include="SocketLib\SocketLib.h" />
   </ItemGroup>

@@ -1,37 +1,40 @@
 ﻿
-#include "SocketLib\SocketLib.h"
-
+#include <map>
+#include <iostream>
+#include "Fedor\Fedor.h"
 #include <stdint.h>
 
+using namespace FedorControl;
+using namespace std;
 using namespace SocketLib;
 
 int main()
 {
-	Socket::Init();
-	uint8_t send_buffer[100] = { 1,3,3 };
-	uint8_t recv_buffer[100];
-	
-	TcpClient client;
-	client.Connect("127.0.0.1", 50789);
-	client.Send(send_buffer, 3);
-	
-	
+	SocketLib::Socket::Init();
 
-	/*TcpServer server;
-	server.Bind(48484);
-	server.Listen();
-	Socket s = server.Accept();
-	int length = s.Recv(recv_buffer, 100);
-	printf("Received:\n length: %d\n data: %s\n", length, recv_buffer);*/
+	Fedor fedor;
+	fedor.Connect("127.0.0.1", 10099);
 
-	/*UdpSocket socket;
-	socket.Connect("127.0.0.1", 50449);
-	socket.Send(send_buffer, 3);*/
+	string command;
+	string value;
 
-	UdpSocket socket;
-	socket.Bind(48484);
-	int length = socket.Recv(recv_buffer, 100);
-	printf("Received:\n length: %d\n data: %s\n", length, recv_buffer);
+	while (true)
+	{
+		cout << "motor: ";
+		cin >> command;
+
+		if (command == "exit")
+			break;
+
+		cout << "value: ";
+		cin >> value;
+
+		std::map<std::string, double> wtf = {
+			{command, stod(value)}
+		};
+
+		fedor.Robot().Motors().Posset(wtf);
+	}
 
     return 0;
 }

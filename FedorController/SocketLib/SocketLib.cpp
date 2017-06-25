@@ -24,14 +24,20 @@ void Helpers::BaseSocket::Close()
 {
 	DWORD result;
 
+	if (_socket == INVALID_SOCKET)
+		return;
+
 #ifdef _WIN32
 	result = closesocket(_socket);
 #elif __linux__
 	result = close(_socket);
 #endif
 
-	if (result == SOCKET_ERROR)
-		throw SocketException(WSAGetLastError());
+	//Если сокет не был подключен, попытка его
+	//закрыть вернет SOCKET_ERROR
+
+	//if (result == SOCKET_ERROR)
+	//	throw SocketException(WSAGetLastError());
 
 	_socket = INVALID_SOCKET;
 }
@@ -108,7 +114,7 @@ void Socket::Init()
 
 Socket::Socket()
 {
-
+	_socket = INVALID_SOCKET;
 }
 
 Socket::Socket(SOCKET_TYPE socket)
