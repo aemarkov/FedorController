@@ -152,14 +152,14 @@ namespace SocketLib
 			Устанавливает соединение
 			\param[in] addr Адрес и порт точки подключения
 			*/
-			void Connect(sockaddr* addr);
+			virtual void Connect(sockaddr* addr);
 
 			/**
 			Устанавливает соединение
 			\param[in] address IP адрес
 			\param[in] port Порт
 			*/
-			void Connect(const char* address, int port);
+			virtual void Connect(const char* address, int port);
 		};
 	}	
 
@@ -242,6 +242,22 @@ namespace SocketLib
 	{
 	public:
 		TcpClient();
+		
+		void Connect(sockaddr* addr) override;
+		virtual void Connect(const char* address, int port) override;
+
+		/**
+		Производит попытку переподключения к серверу
+
+		/params[in] tries Число попыток
+		/return Успешность операции
+		*/
+		bool Reconnect(int tries = 1);
+
+	private:
+		sockaddr_in _addr;
+
+		void CreateSocket();
 	};
 
 	/**

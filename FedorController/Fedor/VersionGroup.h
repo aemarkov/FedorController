@@ -10,7 +10,7 @@ namespace FedorControl
 	{
 	public:
 
-		VersionGroup(SocketLib::Socket & socket, AbstractGroup* parent);
+		VersionGroup(SocketLib::TcpClient & socket, AbstractGroup* parent);
 
 		void Shell();
 		void Protocol();

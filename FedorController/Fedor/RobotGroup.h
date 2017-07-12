@@ -13,7 +13,7 @@ namespace FedorControl
 	{
 	public:
 
-		RobotGroup(SocketLib::Socket & socket, AbstractGroup* parent);
+		RobotGroup(SocketLib::TcpClient & socket, AbstractGroup* parent);
 
 		MotorsGroup & Motors();
 		SensorsGroup & Sensors();

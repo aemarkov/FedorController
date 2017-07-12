@@ -12,7 +12,7 @@ namespace FedorControl
 	{
 	public:
 
-		SensorsGroup(SocketLib::Socket & socket, AbstractGroup* parent);
+		SensorsGroup(SocketLib::TcpClient & socket, AbstractGroup* parent);
 
 		void GetValues();
 		void List();

@@ -22,6 +22,9 @@
     <Filter Include="Fedor\Data">
       <UniqueIdentifier>{1ca6c974-f99e-4d50-8e4b-231fbe96beef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DrivemagParser">
+      <UniqueIdentifier>{3a1b1d68-4363-4a7d-82a7-bae012232be3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FedorController.cpp">
@@ -51,6 +54,12 @@
     <ClCompile Include="Fedor\SensorsGroup.cpp">
       <Filter>Fedor</Filter>
     </ClCompile>
+    <ClCompile Include="Fedor\Data\CommandResult.cpp">
+      <Filter>Fedor\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="DrivemagParser\DrivemagParser.cpp">
+      <Filter>DrivemagParser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SocketLib\SocketLib.h">
@@ -58,9 +67,6 @@
     </ClInclude>
     <ClInclude Include="SocketLib\SocketException.h">
       <Filter>SocketLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Fedor\Data\MotorCommand.h">
-      <Filter>Fedor\Data</Filter>
     </ClInclude>
     <ClInclude Include="Fedor\AbstractGroup.h">
       <Filter>Fedor</Filter>
@@ -79,6 +85,18 @@
     </ClInclude>
     <ClInclude Include="Fedor\VersionGroup.h">
       <Filter>Fedor</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Data\CommandResult.h">
+      <Filter>Fedor\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Data\MotorCommand.h">
+      <Filter>Fedor\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DrivemagParser\DrivemagParser.h">
+      <Filter>DrivemagParser</Filter>
+    </ClInclude>
+    <ClInclude Include="FedorConsole.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

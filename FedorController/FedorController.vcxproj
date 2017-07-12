@@ -90,6 +90,9 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,6 +107,9 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,6 +126,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +145,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,8 +155,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrivemagParser\DrivemagParser.cpp" />
     <ClCompile Include="FedorController.cpp" />
     <ClCompile Include="Fedor\AbstractGroup.cpp" />
+    <ClCompile Include="Fedor\Data\CommandResult.cpp" />
     <ClCompile Include="Fedor\Fedor.cpp" />
     <ClCompile Include="Fedor\MotorsGroup.cpp" />
     <ClCompile Include="Fedor\RobotGroup.cpp" />
@@ -158,7 +168,10 @@
     <ClCompile Include="SocketLib\SocketLib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrivemagParser\DrivemagParser.h" />
+    <ClInclude Include="FedorConsole.h" />
     <ClInclude Include="Fedor\AbstractGroup.h" />
+    <ClInclude Include="Fedor\Data\CommandResult.h" />
     <ClInclude Include="Fedor\Data\MotorCommand.h" />
     <ClInclude Include="Fedor\Fedor.h" />
     <ClInclude Include="Fedor\MotorsGroup.h" />

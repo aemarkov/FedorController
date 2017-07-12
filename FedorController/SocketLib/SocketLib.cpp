@@ -78,6 +78,7 @@ void Helpers::BindableSocket::Bind(int port)
 //Устанавливает соединение
 void Helpers::ConnectableSocket::Connect(sockaddr* addr)
 {
+	int size = sizeof(*addr);
 	if (connect(_socket, addr, sizeof(*addr)) == SOCKET_ERROR)
 		throw SocketException(WSAGetLastError());
 
@@ -104,7 +105,7 @@ void Socket::Init()
 {
 #ifdef _WIN32
 	WSADATA wsaData;
-	int result = WSAStartup(MAKEWORD(1, 1), &wsaData);
+	int result = WSAStartup(0x0202, &wsaData);
 
 	if (result != 0)
 		throw SocketException(WSAGetLastError());
@@ -185,6 +186,44 @@ UdpSocket::UdpSocket()
 
 
 TcpClient::TcpClient()
+{
+	CreateSocket();
+}
+
+void SocketLib::TcpClient::Connect(sockaddr * addr)
+{
+	int size = sizeof(*addr);
+	memcpy(&_addr, addr, sizeof(*addr));
+	Helpers::ConnectableSocket::Connect((sockaddr*)&_addr);
+}
+
+void SocketLib::TcpClient::Connect(const char * address, int port)
+{
+	Helpers::ConnectableSocket::Connect(address, port);
+}
+
+//Производит попытку переподключения к серверу
+bool SocketLib::TcpClient::Reconnect(int tries)
+{
+	CreateSocket();
+
+	for(int i = 0; i<tries; i++)
+	{
+		try
+		{
+			Helpers::ConnectableSocket::Connect((sockaddr*)&_addr);
+			return true;
+		}
+		catch (SocketException)
+		{
+
+		}
+	}
+
+	return false;
+}
+
+void SocketLib::TcpClient::CreateSocket()
 {
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket == INVALID_SOCKET)

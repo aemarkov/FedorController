@@ -13,7 +13,7 @@ namespace FedorControl
 	{
 	public:
 
-		MotorsGroup(SocketLib::Socket & socket, AbstractGroup* parent);
+		MotorsGroup(SocketLib::TcpClient & socket, AbstractGroup* parent);
 
 		//Устанавливает углы поворота моторов
 		void Posset(std::map<std::string, double> motors);
@@ -30,7 +30,17 @@ namespace FedorControl
 		//Не поддерживается
 		void Go();
 
-		//Получить текущие углы выбранных приводов
+		/**
+		Получить текущие углы перечисленных приводов
+		\param [in] motors Названия приводов, углы которых надо получить
+		\return Словарь привод-угол для запрошенных углов
+		*/
+		std::map<std::string, double> Posget(std::vector<std::string> motors);
+
+		/**
+		Получить углы всех приводов
+		\result Словарь привод-угол для всех углов
+		*/
 		std::map<std::string, double> Posget();
 
 		//Отключить привод и зашелкнуть тормозную муфты
@@ -51,6 +61,11 @@ namespace FedorControl
 	private:
 		// Унаследовано через AbstractGroup
 		virtual std::string MyPrefix() override;
+
+		//Список моторов
+		//Используется для запросов всех положений моторов. Заполняется первый раз
+		//при вызове получения списка илип положения всех моторов
+		std::vector<std::string> _motors;
 	};
 
 }

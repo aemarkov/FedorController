@@ -1,6 +1,6 @@
 ﻿#include "VersionGroup.h"
 
-FedorControl::VersionGroup::VersionGroup(SocketLib::Socket & socket, AbstractGroup * parent) : AbstractGroup(socket, parent)
+FedorControl::VersionGroup::VersionGroup(SocketLib::TcpClient & socket, AbstractGroup * parent) : AbstractGroup(socket, parent)
 {
 }
 

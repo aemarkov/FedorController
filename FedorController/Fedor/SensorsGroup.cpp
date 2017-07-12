@@ -1,6 +1,6 @@
 #include "SensorsGroup.h"
 
-FedorControl::SensorsGroup::SensorsGroup(SocketLib::Socket & socket, AbstractGroup * parent) : AbstractGroup(socket, parent)
+FedorControl::SensorsGroup::SensorsGroup(SocketLib::TcpClient & socket, AbstractGroup * parent) : AbstractGroup(socket, parent)
 {
 }
 

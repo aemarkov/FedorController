@@ -13,12 +13,13 @@ namespace FedorControl
 	public:
 
 		Fedor();
+		~Fedor();
 
 		/**
 		Подключается к роботу
 		*/
 		void Connect(const char* ip, int port);
-
+		void Disconnect();
 
 		RobotGroup & Robot();
 		VersionGroup & Version();

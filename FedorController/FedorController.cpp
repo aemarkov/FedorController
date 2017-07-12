@@ -1,41 +1,46 @@
 ﻿
 #include <map>
+#include <string>
+#include <vector>
 #include <iostream>
+#include <iomanip>
 #include "Fedor\Fedor.h"
 #include <stdint.h>
+#include <fstream>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+#include <FedorConsole.h>
 
 using namespace FedorControl;
 using namespace std;
 using namespace SocketLib;
 
-int main()
-{
-	SocketLib::Socket::Init();
+//#define foreach(iterator, collection) for(auto iterator = collection.begin(); iterator != collection.end(); ++iterator)
 
+
+
+int main(int argc, char** argv)
+{
+	/*if (argc != 2)
+	{
+		cout << "Usage:\n";
+		cout << "FedorController <drivemag.txt>\n";
+		return -1;
+	}
+
+	char* filename = argv[1];*/
+
+
+	
+
+	Socket::Init();
 	Fedor fedor;
 	fedor.Connect("127.0.0.1", 10099);
 
-	string command;
-	string value;
+	FedorConsole(fedor);
 
-	while (true)
-	{
-		cout << "motor: ";
-		cin >> command;
-
-		if (command == "exit")
-			break;
-
-		cout << "value: ";
-		cin >> value;
-
-		std::map<std::string, double> wtf = {
-			{command, stod(value)}
-		};
-
-		fedor.Robot().Motors().Posset(wtf);
-	}
-
-    return 0;
+	return 0;
 }
 
