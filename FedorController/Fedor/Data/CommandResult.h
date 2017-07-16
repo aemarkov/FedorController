@@ -2,6 +2,7 @@
 #define __COMANDRESULT_H__
 
 #include <stdint.h>
+#include <exception>
 
 namespace FedorControl
 {

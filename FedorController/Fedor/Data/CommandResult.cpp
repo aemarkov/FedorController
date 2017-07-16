@@ -18,6 +18,8 @@ FedorResultCode CommandResult::Code()
 {
 	if (_buffer != nullptr && _bufferLength > 0)
 		return (FedorResultCode)_buffer[0];  //Опасный код
+
+	throw std::exception("Buffer is empty");
 }
 
 uint8_t * FedorControl::CommandResult::Buffer()

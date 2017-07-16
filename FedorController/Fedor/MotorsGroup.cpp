@@ -50,7 +50,7 @@ std::map<std::string, double> FedorControl::MotorsGroup::Posget(std::vector<std:
 	std::map<std::string, double> angles;
 	int pos = 0;
 	int matchPos;
-	int index = 0;
+	size_t index = 0;
 
 	while ((matchPos = str.find(';', pos)) != std::string::npos && index < motors.size())
 	{

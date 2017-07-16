@@ -132,6 +132,8 @@ int Socket::Send(const uint8_t * buffer, int length, int flags) const
 	int result = send(_socket, (char*)buffer, length, flags);
 	if(result == SOCKET_ERROR)
 		throw SocketException(WSAGetLastError());
+
+	return result;
 }
 
 //Принимает данные

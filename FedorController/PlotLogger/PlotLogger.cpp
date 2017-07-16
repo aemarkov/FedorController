@@ -19,8 +19,10 @@ void PlotLogger::Begin(std::string filename, char separator)
 	if (!_file.is_open())
 		throw std::runtime_error("Can't open file " + filename);
 
+	_line.clear();
 	_separator = separator;
 	_isFrame = false;
+	_isHeader = false;
 
 }
 
@@ -43,30 +45,53 @@ void PlotLogger::SetupHeaders(std::vector<std::string> titles)
 	if (titles.size() == 0)
 		throw invalid_argument("Titles count shouldn't be 0");
 
-	for (const auto  & title: titles)
-		_line.insert(pair<string, pair<double, bool>>(title, pair<double, bool>(0, false)));
+	for (const auto & title : titles)
+		_line.push_back(LineItem(title));
 
-	//Запись заголовков в файл
 
-	//Итератор на последнем элементе
-	auto last = --_line.end();
+	FinishHeader();
+}
 
-	for (auto it = _line.begin(); it != _line.end(); ++it)
+//Добавляет еще одну переменную в заголоовк
+void PlotLogger::AddTitle(std::string title)
+{
+	if (!_isHeader)
+		_line.push_back(LineItem(title));
+	else
+		throw logic_error("Header is already finished");
+}
+
+//Завершает формирование заголовка
+void PlotLogger::FinishHeader()
+{
+	if (!_isHeader)
 	{
-		_file << it->first;;
+		if (_line.size() == 0)
+			throw invalid_argument("Titles count shouldn't be 0");
 
-		//Не ставим разделитель после последнего столбца
-		if (it != last)
-			_file << _separator;
+		//Итератор на последнем элементе
+		auto last = --_line.end();
+
+		for (auto it = _line.begin(); it != _line.end(); ++it)
+		{
+			_file << it->name;;
+
+			//Не ставим разделитель после последнего столбца
+			if (it != last)
+				_file << _separator;
+		}
+
+		_file.flush();
+		_isHeader = true;
 	}
-
-	_file.flush();
+	else
+		throw logic_error("Header is already finished");
 }
 
 //Начинает фрейм (строку) - блок данных с одним значением абсциссы
 void PlotLogger::BeginFrame(double x)
 {
-	if (_line.size() == 0)
+	if (!_isHeader)
 		throw logic_error("Setup header first");
 
 
@@ -74,14 +99,14 @@ void PlotLogger::BeginFrame(double x)
 	if (_isFrame)
 		EndFrame();
 
-	auto & value = _line.begin()->second;
+	auto & item = _line.begin();
 
 	// Повторный вызов с той же самой абсциссой
-	if (value.first == x && _isFrame)
+	if (item->value == x && _isFrame)
 		return;
 
-	value.first = x;
-	value.second = true;
+	item->value = x;
+	item->isSet = true;
 
 	_isFrame = true;
 }
@@ -89,18 +114,45 @@ void PlotLogger::BeginFrame(double x)
 //Добавляет значение в текущий фрейм
 void PlotLogger::AddValue(std::string name, double value)
 {
-	auto & it = _line.find(name);
-	if (it == _line.end())
+	//Ищем элемент с нужным именем
+	int itemIndex = -1;
+	for (size_t i = 0; i < _line.size(); i++)
+	{
+		if (_line[i].name == name)
+		{
+			itemIndex = i;
+			break;
+		}
+	}
+
+
+	if (itemIndex == -1)
 		throw invalid_argument("\"" + name + "\" doesn't present in header");
 
-	it->second.first = value;
-	it->second.second = true;
+	_line[itemIndex].value = value;
+	_line[itemIndex].isSet = true;
 }
 
 //Добавляет значение в текущий фрейм
 void PlotLogger::AddValue(std::pair<std::string, double> value)
 {
+	AddValue(value.first, value.second);
 }
+
+//Добавлен ли заголовок
+bool PlotLogger::IsHeader()
+{
+	return _isHeader;
+}
+
+//Открыт ли файл
+bool PlotLogger::IsOpen()
+{
+	return _file.is_open();
+}
+
+
+
 
 // Завершает фрейм
 void PlotLogger::EndFrame()
@@ -115,13 +167,27 @@ void PlotLogger::EndFrame()
 
 	for (auto it = _line.begin(); it != _line.end(); ++it)
 	{
-		if (it->second.second)
-			_file << it->second.first;
+		if (it->isSet)
+			_file << it->value;
 
 		//Не ставим разделитель после последнего столбца
-		if(it != last)
+		if (it != last)
 			_file << _separator;
 	}
 
 	_file.flush();
+}
+
+
+
+
+PlotLogger::LineItem::LineItem()
+{
+}
+
+PlotLogger::LineItem::LineItem(std::string name)
+{
+	this->name = name;
+	isSet = false;
+	value = 0;
 }

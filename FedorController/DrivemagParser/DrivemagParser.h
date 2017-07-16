@@ -1,6 +1,9 @@
 ﻿#ifndef __DRIVEMAGPARSER_H__
 #define __DRIVEMAGPARSER_H__
 
+
+
+
 #include <fstream>
 #include <string>
 #include <functional>
@@ -11,21 +14,21 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <Windows.h>
 
 #include <iostream>
 #include <iomanip>
 
+
 namespace FedorControl
 {
+	using namespace std;
+
 	/**
 	Парсит и воспроизводит файлы формата DRIVEMAG.
 	*/
 	class DrivemagParser
 	{
 	public:
-
-		using RobotPos = std::map<std::string, double>;
 
 		/**
 		Парсит и воспроизводит файл формата DRIVEMAG.
@@ -34,12 +37,17 @@ namespace FedorControl
 		/param[in] filename Имя файла drivemag
 		/param[in] callback функция, вызываемая каждый кадр
 		*/
-		static void PlayDrivemag(std::string filename, std::function<void(RobotPos)> callback);
+		static void PlayDrivemag(string filename, function<void(double, double, map<string, double>)> callback);
 
 	private:
 
+		static map<int, string> driveMap;			// Мапит названия двигателей
+		static map<int, bool> driveInvert;				// Какие оси надо инвертировать
+
+
+
 		//Преобразует номер двигателя из Drivemag в название мотора Федра
-		static std::string MapDrive(int drive);
+		static string MapDrive(int drive);
 
 		//Инвертирует ось
 		static double InvertDrive(int drive, double angle);
@@ -47,11 +55,7 @@ namespace FedorControl
 		//Переводит радианы в градусы
 		static double rad2deg(double rad);
 
-		static std::map<int, std::string> driveMap;			// Мапит названия двигателей
-		static std::map<int, bool> driveInvert;				// Какие оси надо инвертировать
-
-
-		static void Log(int line, double time, std::ofstream & log, RobotPos & poses);
+		static void ProcessFrame(double lastTime, double time, map<string, double> & poses, function<void(double, double, map<string, double>)> callback);
 	};
 }
 

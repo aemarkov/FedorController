@@ -48,10 +48,28 @@ public:
 	void Close();
 
 	/**
-		Устанавливает заголовки столбцов
+		/brief Устанавливает заголовки столбцов
+
+		В результате заголовок сразу завершен
+
 		\param[in] titles Вектор заголовков
 	*/
 	void SetupHeaders(std::vector<std::string> titles);
+
+	/**
+		\brief Добавляет еще одну переменную в заголовок
+
+		Можно сделать только пока заголовок не завершен функцией
+		FinishHeader. Функция SetHeaders сразу завершает заголовок
+
+		\param[in] title Имя переменной
+	*/
+	void AddTitle(std::string title);
+
+	/**
+		Завершает формирование заголовка
+	*/
+	void FinishHeader();
 
 	/**
 		/brief Начинает фрейм (строку) - блок данных с
@@ -80,11 +98,34 @@ public:
 	*/
 	void AddValue(std::pair<std::string, double> value);
 
+
+	/**
+		Добавлен ли заголовок
+	*/
+	bool IsHeader();
+
+	/**
+		Открыт ли файл
+	*/
+	bool IsOpen();
+
 private:
-	std::ofstream _file;											// Файл лога
-	std::map<std::string, std::pair<double, bool>> _line;		// Значения текущего фрейма
+
+	struct LineItem
+	{
+		std::string name;
+		double value;
+		bool isSet;
+
+		LineItem();
+		LineItem(std::string name);
+	};
+
+	std::ofstream _file;										// Файл лога
+	std::vector<LineItem> _line;								// Значения текущего фрейма
 	char _separator;											// Разделитель столбцов
 	bool _isFrame;												// Был ли начат фрейм
+	bool _isHeader;												// Заголовок добавлен
 	
 	void EndFrame();
 };

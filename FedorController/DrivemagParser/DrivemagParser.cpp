@@ -55,27 +55,24 @@ map<int, bool> DrivemagParser::driveInvert = {
 ...                                               |
 номер_привода_n время_2 угол какая-то дичь дичь   /
 */
-void DrivemagParser::PlayDrivemag(string filename, function<void(RobotPos)> callback)
+void DrivemagParser::PlayDrivemag(string filename, function<void(double, double, map<string, double>)> callback)
 {
 	if (!experimental::filesystem::exists(filename))
-		throw std::invalid_argument("File not found");
+		throw invalid_argument("File not found");
 
 	if (callback == nullptr)
-		throw std::invalid_argument("Invalid callback");
+		throw invalid_argument("Invalid callback");
 
 	ifstream drivemag(filename);
 	if (!drivemag.is_open())
-		throw std::runtime_error("Can't open file " + filename);
+		throw runtime_error("Can't open file " + filename);
 
-	int line = 0;
 	int motor;
 	double time, pos;
 	string wtf;				//Чтобы считать дичь
 
 	double lastTime = 0;
 	map<string, double> poses;
-
-	ofstream log("log.csv");
 
 	while (!drivemag.eof())
 	{
@@ -85,38 +82,38 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(RobotPos)> call
 
 		// Считаны весь фрейм
 		if (time > lastTime)
-		{
-			Log(line, time, log, poses);
-
-			callback(poses);
-
-			poses.clear();
-			int sleepTime = (time - lastTime) * 1000;
-			Sleep(sleepTime);
-
-			line++;
-		}
+			ProcessFrame(lastTime, time, poses, callback);
 
 
 		string fedorDrive = MapDrive(motor);
 		if (fedorDrive != "")
 		{
-			double deg = InvertDrive(motor, pos);
-			poses.insert(std::pair<string, double>(fedorDrive, deg));
+			double deg = InvertDrive(motor, rad2deg(pos));
+			//double deg = InvertDrive(motor, pos);
+			poses.insert(pair<string, double>(fedorDrive, deg));
 		}
 
 		lastTime = time;
 	}
 
-	log.close();
+	ProcessFrame(lastTime, time, poses, callback);
+
 	drivemag.close();
+}
+
+void DrivemagParser::ProcessFrame(double lastTime, double time, map<string, double> & poses, function<void(double, double, map<string,double>)> callback)
+{
+	int sleepTime = (time - lastTime) * 1000;
+	callback(lastTime, sleepTime, poses);
+	poses.clear();
+	//Sleep(sleepTime);
 }
 
 
 //Преобразует номер двигателя из Drivemag в название мотора Федра
 string DrivemagParser::MapDrive(int drive)
 {
-	std::map<int, string>::iterator it;
+	map<int, string>::iterator it;
 
 	if ((it = driveMap.find(drive)) == driveMap.end())
 		return "";
@@ -127,7 +124,7 @@ string DrivemagParser::MapDrive(int drive)
 //Инвертирует ось
 double DrivemagParser::InvertDrive(int drive, double angle)
 {
-	std::map<int, bool>::iterator it;
+	map<int, bool>::iterator it;
 
 	if ((it = driveInvert.find(drive)) == driveInvert.end())
 		return angle;
@@ -139,36 +136,4 @@ double DrivemagParser::InvertDrive(int drive, double angle)
 double DrivemagParser::rad2deg(double rad)
 {
 	return rad / M_PI * 180.0;
-}
-
-void DrivemagParser::Log(int line, double time, ofstream & log, RobotPos & poses)
-{
-	//Выводим заголовок
-	if (line == 0)
-	{
-		std::cout << setw(8) << "Time" << " | ";
-		log << "Time;";
-
-		for (auto it = poses.begin(); it != poses.end(); ++it)
-		{
-			std::cout << fixed << setw(12) << it->first;
-			log << it->first << ";";
-		}
-
-		std::cout << "\n";
-		log << "\n";
-
-	}
-
-	std::cout << fixed << setw(8) << setprecision(4) << time << " | ";
-	log << fixed << setprecision(4) << time << ";";
-	for (auto it = poses.begin(); it != poses.end(); ++it)
-	{
-		std::cout << fixed << setw(12) << setprecision(2) << it->second;
-		log << fixed << setprecision(4) << it->second << ";";
-	}
-
-	std::cout << "\n";
-	log << "\n";
-	log.flush();
-}
+} 
