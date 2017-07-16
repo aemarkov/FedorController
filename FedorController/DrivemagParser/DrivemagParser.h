@@ -13,8 +13,14 @@
 #include <math.h>
 #include <Windows.h>
 
+#include <iostream>
+#include <iomanip>
+
 namespace FedorControl
 {
+	/**
+	Парсит и воспроизводит файлы формата DRIVEMAG.
+	*/
 	class DrivemagParser
 	{
 	public:
@@ -22,7 +28,7 @@ namespace FedorControl
 		using RobotPos = std::map<std::string, double>;
 
 		/**
-		Парсит и воспроизводит файлы формата DRIVEMAG.
+		Парсит и воспроизводит файл формата DRIVEMAG.
 		Эта функция блокирующая
 
 		/param[in] filename Имя файла drivemag
@@ -35,11 +41,17 @@ namespace FedorControl
 		//Преобразует номер двигателя из Drivemag в название мотора Федра
 		static std::string MapDrive(int drive);
 
+		//Инвертирует ось
+		static double InvertDrive(int drive, double angle);
+
 		//Переводит радианы в градусы
 		static double rad2deg(double rad);
 
-		static std::map<int, std::string> drivemap;
+		static std::map<int, std::string> driveMap;			// Мапит названия двигателей
+		static std::map<int, bool> driveInvert;				// Какие оси надо инвертировать
 
+
+		static void Log(int line, double time, std::ofstream & log, RobotPos & poses);
 	};
 }
 

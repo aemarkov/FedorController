@@ -25,6 +25,9 @@
     <Filter Include="DrivemagParser">
       <UniqueIdentifier>{3a1b1d68-4363-4a7d-82a7-bae012232be3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PlotLogger">
+      <UniqueIdentifier>{eb9ad154-f6a0-4404-971d-a3334e8c3392}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FedorController.cpp">
@@ -59,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="DrivemagParser\DrivemagParser.cpp">
       <Filter>DrivemagParser</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotLogger\PlotLogger.cpp">
+      <Filter>PlotLogger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="FedorConsole.h">
       <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotLogger\PlotLogger.h">
+      <Filter>PlotLogger</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

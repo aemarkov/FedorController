@@ -8,14 +8,23 @@
 
 namespace FedorControl
 {
-
+	/**
+		Набор интерфейсов для работы с роботом
+	*/
 	class RobotGroup : public AbstractGroup
 	{
 	public:
 
 		RobotGroup(SocketLib::TcpClient & socket, AbstractGroup* parent);
 
+		/**
+			Набор интерфейсов для работы с моторами
+		*/
 		MotorsGroup & Motors();
+
+		/**
+			Набор интерфейсов для работы с датчиками
+		*/
 		SensorsGroup & Sensors();
 
 

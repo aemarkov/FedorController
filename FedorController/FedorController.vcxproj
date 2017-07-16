@@ -164,6 +164,7 @@
     <ClCompile Include="Fedor\RobotGroup.cpp" />
     <ClCompile Include="Fedor\SensorsGroup.cpp" />
     <ClCompile Include="Fedor\VersionGroup.cpp" />
+    <ClCompile Include="PlotLogger\PlotLogger.cpp" />
     <ClCompile Include="SocketLib\SocketException.cpp" />
     <ClCompile Include="SocketLib\SocketLib.cpp" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClInclude Include="Fedor\RobotGroup.h" />
     <ClInclude Include="Fedor\SensorsGroup.h" />
     <ClInclude Include="Fedor\VersionGroup.h" />
+    <ClInclude Include="PlotLogger\PlotLogger.h" />
     <ClInclude Include="SocketLib\SocketException.h" />
     <ClInclude Include="SocketLib\SocketLib.h" />
   </ItemGroup>

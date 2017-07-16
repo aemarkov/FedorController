@@ -59,7 +59,7 @@ CommandResult AbstractGroup::SendCommand(std::string command)
 		if (!_socket.Reconnect())
 		{
 			std::cout << "Error: " << ex.GetErrorCode() << "\n";
-			return;
+			return CommandResult();
 		}
 
 		return _SendCommand(command);

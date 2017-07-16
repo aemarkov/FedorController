@@ -7,6 +7,9 @@
 
 namespace FedorControl
 {
+	/**
+		Реализует интерфейс управления роботом
+	*/
 	class Fedor
 	{	
 	
@@ -16,12 +19,27 @@ namespace FedorControl
 		~Fedor();
 
 		/**
-		Подключается к роботу
+			Подключается к роботу
+
+			\param[in] ip IP-адрес робота
+			\param[in] port Порт робота
 		*/
 		void Connect(const char* ip, int port);
+
+		/**
+			Отключается от робота
+		*/
 		void Disconnect();
 
+		/**
+			Группа интерфейсов для работы с роботом
+		*/
 		RobotGroup & Robot();
+
+		/**
+			Группа интерфейсов для работы с версиями
+			ПО и протокола
+		*/
 		VersionGroup & Version();
 
 	private:

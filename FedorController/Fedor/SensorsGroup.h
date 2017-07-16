@@ -7,7 +7,9 @@
 
 namespace FedorControl 
 {
-
+	/**
+		Набор интерфейсов для работы с датчиками
+	*/
 	class SensorsGroup : public AbstractGroup
 	{
 	public:
