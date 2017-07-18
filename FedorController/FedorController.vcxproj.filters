@@ -95,9 +95,6 @@
     <ClInclude Include="Fedor\Data\CommandResult.h">
       <Filter>Fedor\Data</Filter>
     </ClInclude>
-    <ClInclude Include="Fedor\Data\MotorCommand.h">
-      <Filter>Fedor\Data</Filter>
-    </ClInclude>
     <ClInclude Include="DrivemagParser\DrivemagParser.h">
       <Filter>DrivemagParser</Filter>
     </ClInclude>
@@ -106,6 +103,15 @@
     </ClInclude>
     <ClInclude Include="PlotLogger\PlotLogger.h">
       <Filter>PlotLogger</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Data\IMUData.h">
+      <Filter>Fedor\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Data\ForceData.h">
+      <Filter>Fedor\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Fedor\Data\SensorsData.h">
+      <Filter>Fedor\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

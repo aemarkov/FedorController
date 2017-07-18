@@ -88,8 +88,8 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(double, double,
 		string fedorDrive = MapDrive(motor);
 		if (fedorDrive != "")
 		{
-			double deg = InvertDrive(motor, rad2deg(pos));
-			//double deg = InvertDrive(motor, pos);
+			//double deg = InvertDrive(motor, rad2deg(pos));
+			double deg = InvertDrive(motor, pos);
 			poses.insert(pair<string, double>(fedorDrive, deg));
 		}
 

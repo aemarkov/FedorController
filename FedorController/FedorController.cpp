@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 	//fedor->Connect("79.170.167.30", 58099);
 	fedor->Connect("127.0.0.1", 10099);
 
+
 	logger.Begin("log.txt", ' ');
 
 	t0 = chrono::steady_clock::now();
@@ -68,21 +69,70 @@ void PlayFrame(double t, double sleepTime, map<string, double> & poses)
 		for (auto & motor : motors)
 			logger.AddTitle(motor + "_real");
 		
+		logger.AddTitle("Yaw");
+		logger.AddTitle("Pitch");
+		logger.AddTitle("Roll");
+
+		logger.AddTitle("R.FTS.Ankle_Fx");
+		logger.AddTitle("R.FTS.Ankle_Fy");
+		logger.AddTitle("R.FTS.Ankle_Fz");
+		logger.AddTitle("R.FTS.Ankle_Tx");
+		logger.AddTitle("R.FTS.Ankle_Ty");
+		logger.AddTitle("R.FTS.Ankle_Tz");
+
+		logger.AddTitle("L.FTS.Ankle_Fx");
+		logger.AddTitle("L.FTS.Ankle_Fy");
+		logger.AddTitle("L.FTS.Ankle_Fz");
+		logger.AddTitle("L.FTS.Ankle_Tx");
+		logger.AddTitle("L.FTS.Ankle_Ty");
+		logger.AddTitle("L.FTS.Ankle_Tz");
+
 
 		logger.FinishHeader();
 	}
-
-	chrono::duration<double> t_ = chrono::steady_clock::now() - t0;
-
-	logger.BeginFrame(t);
-	for (auto & pos : poses)
-		logger.AddValue(pos);
+	
 	
 	fedor->Robot().Motors().Posset(poses);
+	auto delayStart = chrono::steady_clock::now();
+	chrono::duration<double> currentDelay;
 
-	Sleep(sleepTime);
+	do
+	{
+		chrono::duration<double> t_ = chrono::steady_clock::now() - t0;
 
-	auto realPoses = fedor->Robot().Motors().Posget();
-	for (auto & pose : realPoses)
-		logger.AddValue(pose.first + "_real", pose.second);
+		logger.BeginFrame(t_.count());
+		for (auto & pos : poses)
+			logger.AddValue(pos);
+
+		auto realPoses = fedor->Robot().Motors().Posget();
+
+		for (auto & pose : realPoses)
+			logger.AddValue(pose.first + "_real", pose.second);
+
+		auto imu = fedor->Robot().Sensors().GetIMU();
+		logger.AddValue("Yaw", imu.Euler.x);
+		logger.AddValue("Pitch", imu.Euler.y);
+		logger.AddValue("Roll", imu.Euler.z);
+
+		auto force = fedor->Robot().Sensors().GetForce({SensorsGroup::L_FTS_Ankle, SensorsGroup::R_FTS_Ankle});
+		auto forceLeft = force[SensorsGroup::L_FTS_Ankle];
+		auto forceRight = force[SensorsGroup::R_FTS_Ankle];
+		
+		logger.AddValue("R.FTS.Ankle_Fx", forceRight.F.x);
+		logger.AddValue("R.FTS.Ankle_Fy", forceRight.F.y);
+		logger.AddValue("R.FTS.Ankle_Fz", forceRight.F.z);
+		logger.AddValue("R.FTS.Ankle_Tx", forceRight.T.x);
+		logger.AddValue("R.FTS.Ankle_Ty", forceRight.T.y);
+		logger.AddValue("R.FTS.Ankle_Tz", forceRight.T.z);
+
+		logger.AddValue("L.FTS.Ankle_Fx", forceLeft.F.x);
+		logger.AddValue("L.FTS.Ankle_Fy", forceLeft.F.y);
+		logger.AddValue("L.FTS.Ankle_Fz", forceLeft.F.z);
+		logger.AddValue("L.FTS.Ankle_Tx", forceLeft.T.x);
+		logger.AddValue("L.FTS.Ankle_Ty", forceLeft.T.y);
+		logger.AddValue("L.FTS.Ankle_Tz", forceLeft.T.z);
+
+		currentDelay = chrono::steady_clock::now() - delayStart;
+
+	} while (currentDelay.count() * 1000 < sleepTime);
 }

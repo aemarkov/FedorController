@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler XE 13.0</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -173,7 +173,9 @@
     <ClInclude Include="FedorConsole.h" />
     <ClInclude Include="Fedor\AbstractGroup.h" />
     <ClInclude Include="Fedor\Data\CommandResult.h" />
-    <ClInclude Include="Fedor\Data\MotorCommand.h" />
+    <ClInclude Include="Fedor\Data\ForceData.h" />
+    <ClInclude Include="Fedor\Data\IMUData.h" />
+    <ClInclude Include="Fedor\Data\SensorsData.h" />
     <ClInclude Include="Fedor\Fedor.h" />
     <ClInclude Include="Fedor\MotorsGroup.h" />
     <ClInclude Include="Fedor\RobotGroup.h" />

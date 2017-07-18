@@ -110,10 +110,20 @@ std::vector<std::string> AbstractGroup::Slice(std::string str, char separator)
 	int matchPos;
 	std::vector<std::string> substrings;
 
-	while ((matchPos = str.find(';', pos)) != std::string::npos)
+	while ((matchPos = str.find(separator, pos)) != std::string::npos)
 	{
 		std::string substr = str.substr(pos, matchPos - pos);
 		pos = matchPos + 1;
+		substrings.push_back(substr);
+	}
+
+	//Если после последнего токена нет разделителя (A;B;) -> (A;B)
+	//то надо остаток забрать, но не до конца строки, а до \r\n
+	int end = str.find("\r\n");
+
+	if (pos != end)
+	{
+		std::string substr = str.substr(pos, end - pos);
 		substrings.push_back(substr);
 	}
 
