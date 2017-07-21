@@ -17,6 +17,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+#include <Windows.h>
 
 
 namespace FedorControl
@@ -37,14 +39,16 @@ namespace FedorControl
 		/param[in] filename Имя файла drivemag
 		/param[in] callback функция, вызываемая каждый кадр
 		*/
-		static void PlayDrivemag(string filename, function<void(double, double, map<string, double>)> callback);
+		static void PlayDrivemag(string filename, function<void(double, map<string, double>)> callback);
 
 	private:
 
 		static map<int, string> driveMap;			// Мапит названия двигателей
-		static map<int, bool> driveInvert;				// Какие оси надо инвертировать
+		static map<int, bool> driveInvert;			// Какие оси надо инвертировать
 
-
+		static const int frameDt;					// Желаемая длительность фрейма для интерполяции (мс)
+		static const bool isInterpolation;
+		static const int minInterpolationDt;
 
 		//Преобразует номер двигателя из Drivemag в название мотора Федра
 		static string MapDrive(int drive);
@@ -52,10 +56,22 @@ namespace FedorControl
 		//Инвертирует ось
 		static double InvertDrive(int drive, double angle);
 
+		//Добавляет мотор
+		static void AddDrive(map<string, double> & pose, int motor, double pos);
+
+		//Воспроизводит одну позу
+		static void RunSingle(map<string, double> poses, chrono::time_point<chrono::steady_clock> t0, int delay, function<void(double, map<string, double>)> callback);
+
+		//Выполняет интерполяцию
+		static void Interpolate(map<string, double> fromPose, map<string, double> toPose, chrono::time_point<chrono::steady_clock> t0, int delay, function<void(double, map<string, double>)> callback);
+
 		//Переводит радианы в градусы
 		static double rad2deg(double rad);
 
-		static void ProcessFrame(double lastTime, double time, map<string, double> & poses, function<void(double, double, map<string, double>)> callback);
+		// Переключает позы
+		static void SwapPose(int & curPose);
+
+		
 	};
 }
 

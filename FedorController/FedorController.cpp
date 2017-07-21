@@ -20,13 +20,11 @@ using namespace FedorControl;
 using namespace std;
 using namespace SocketLib;
 
-void PlayFrame(double t, double sleepTime, map<string, double> & poses);
+void PlayFrame(double t, map<string, double> & poses);
 
 Fedor* fedor;
 PlotLogger logger;
 
-
-chrono::time_point<chrono::steady_clock> t0;
 
 int main(int argc, char** argv)
 {
@@ -48,7 +46,6 @@ int main(int argc, char** argv)
 
 	logger.Begin("log.txt", ' ');
 
-	t0 = chrono::steady_clock::now();
 	DrivemagParser::PlayDrivemag(filename, PlayFrame);
 
 	fedor->Disconnect();
@@ -56,7 +53,7 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-void PlayFrame(double t, double sleepTime, map<string, double> & poses)
+void PlayFrame(double t, map<string, double> & poses)
 {
 	if (!logger.IsHeader())
 	{
@@ -68,7 +65,7 @@ void PlayFrame(double t, double sleepTime, map<string, double> & poses)
 		auto motors = fedor->Robot().Motors().List();
 		for (auto & motor : motors)
 			logger.AddTitle(motor + "_real");
-		
+
 		logger.AddTitle("Yaw");
 		logger.AddTitle("Pitch");
 		logger.AddTitle("Roll");
@@ -90,49 +87,46 @@ void PlayFrame(double t, double sleepTime, map<string, double> & poses)
 
 		logger.FinishHeader();
 	}
-	
-	
+
+
 	fedor->Robot().Motors().Posset(poses);
 	auto delayStart = chrono::steady_clock::now();
 	chrono::duration<double> currentDelay;
 
-	do
-	{
-		chrono::duration<double> t_ = chrono::steady_clock::now() - t0;
+	logger.BeginFrame(t);
 
-		logger.BeginFrame(t_.count());
-		for (auto & pos : poses)
-			logger.AddValue(pos);
+	for (auto & pos : poses)
+		logger.AddValue(pos);
 
-		auto realPoses = fedor->Robot().Motors().Posget();
+	auto realPoses = fedor->Robot().Motors().Posget();
 
-		for (auto & pose : realPoses)
-			logger.AddValue(pose.first + "_real", pose.second);
+	for (auto & pose : realPoses)
+		logger.AddValue(pose.first + "_real", pose.second);
 
-		auto imu = fedor->Robot().Sensors().GetIMU();
-		logger.AddValue("Yaw", imu.Euler.x);
-		logger.AddValue("Pitch", imu.Euler.y);
-		logger.AddValue("Roll", imu.Euler.z);
+	auto imu = fedor->Robot().Sensors().GetIMU();
+	logger.AddValue("Yaw", imu.Euler.x);
+	logger.AddValue("Pitch", imu.Euler.y);
+	logger.AddValue("Roll", imu.Euler.z);
 
-		auto force = fedor->Robot().Sensors().GetForce({SensorsGroup::L_FTS_Ankle, SensorsGroup::R_FTS_Ankle});
-		auto forceLeft = force[SensorsGroup::L_FTS_Ankle];
-		auto forceRight = force[SensorsGroup::R_FTS_Ankle];
-		
-		logger.AddValue("R.FTS.Ankle_Fx", forceRight.F.x);
-		logger.AddValue("R.FTS.Ankle_Fy", forceRight.F.y);
-		logger.AddValue("R.FTS.Ankle_Fz", forceRight.F.z);
-		logger.AddValue("R.FTS.Ankle_Tx", forceRight.T.x);
-		logger.AddValue("R.FTS.Ankle_Ty", forceRight.T.y);
-		logger.AddValue("R.FTS.Ankle_Tz", forceRight.T.z);
+	auto force = fedor->Robot().Sensors().GetForce({ SensorsGroup::L_FTS_Ankle, SensorsGroup::R_FTS_Ankle });
+	auto forceLeft = force[SensorsGroup::L_FTS_Ankle];
+	auto forceRight = force[SensorsGroup::R_FTS_Ankle];
 
-		logger.AddValue("L.FTS.Ankle_Fx", forceLeft.F.x);
-		logger.AddValue("L.FTS.Ankle_Fy", forceLeft.F.y);
-		logger.AddValue("L.FTS.Ankle_Fz", forceLeft.F.z);
-		logger.AddValue("L.FTS.Ankle_Tx", forceLeft.T.x);
-		logger.AddValue("L.FTS.Ankle_Ty", forceLeft.T.y);
-		logger.AddValue("L.FTS.Ankle_Tz", forceLeft.T.z);
+	logger.AddValue("R.FTS.Ankle_Fx", forceRight.F.x);
+	logger.AddValue("R.FTS.Ankle_Fy", forceRight.F.y);
+	logger.AddValue("R.FTS.Ankle_Fz", forceRight.F.z);
+	logger.AddValue("R.FTS.Ankle_Tx", forceRight.T.x);
+	logger.AddValue("R.FTS.Ankle_Ty", forceRight.T.y);
+	logger.AddValue("R.FTS.Ankle_Tz", forceRight.T.z);
 
-		currentDelay = chrono::steady_clock::now() - delayStart;
+	logger.AddValue("L.FTS.Ankle_Fx", forceLeft.F.x);
+	logger.AddValue("L.FTS.Ankle_Fy", forceLeft.F.y);
+	logger.AddValue("L.FTS.Ankle_Fz", forceLeft.F.z);
+	logger.AddValue("L.FTS.Ankle_Tx", forceLeft.T.x);
+	logger.AddValue("L.FTS.Ankle_Ty", forceLeft.T.y);
+	logger.AddValue("L.FTS.Ankle_Tz", forceLeft.T.z);
 
-	} while (currentDelay.count() * 1000 < sleepTime);
+	currentDelay = chrono::steady_clock::now() - delayStart;
+
+
 }
