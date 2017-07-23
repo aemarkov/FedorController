@@ -123,14 +123,11 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(double, map<str
 			drivemag >> motor >> time >> pos;
 			getline(drivemag, wtf);
 
-			std::cout << "Reading line: " << time << "\n";
-
+			//time *= 5000;
 
 			// Начался новый фрейм, старый закончился
 			if (time > lastTime)
 			{
-				std::cout << "Frame " << lastTime << " finished, new frame: " << time << "\n";
-
 				readyPose = curReadingPose;
 				isFrameReady = true;
 				currentFrame++;
@@ -149,10 +146,11 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(double, map<str
 				auto & toPose = poses[readyPose];						// В какую переходить
 
 
+				//std::cout << std::fixed << std::setprecision(4)<< lastTime << "\n";
+
 				if (isInterpolation && dT >= minInterpolationDt)
 				{
 					// Интерполяция
-					std::cout << "Interpolation [" << previousFrameTime << ", " << lastTime << "]\n";
 					Interpolate(fromPose, toPose, t0, dT, callback);
 				}
 				else
@@ -164,11 +162,9 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(double, map<str
 						// В дальнейшем, только фрейм "to"
 
 						RunSingle(fromPose, t0, dT, callback);
-						std::cout << "Running " << previousFrameTime << "\n";
 					}
 
 					// Сразу устанавливаем в последний фрейм
-					std::cout << "Running " << lastTime << "\n";
 					RunSingle(toPose,t0, dT, callback);
 
 				}
@@ -189,7 +185,6 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(double, map<str
 		// Цикл должен пройти еще раз, чтобы обработать фрейм
 		if (drivemag.eof())
 		{
-			std::cout << "Reading last line, frame " << lastTime << " finished\n";
 			readyPose = curReadingPose;
 			isFrameReady = true;
 			currentFrame++;
@@ -205,13 +200,9 @@ void DrivemagParser::PlayDrivemag(string filename, function<void(double, map<str
 // Переключает позы
 void DrivemagParser::SwapPose(int & curPose)
 {
-	std::cout << "Swapping pose " << curPose << " -> ";
-
 	curPose++;
 	if (curPose == 2)
 		curPose = 0;
-
-	std::cout << curPose << "\n";
 }
 
 //Преобразует номер двигателя из Drivemag в название мотора Федра
@@ -243,8 +234,8 @@ void DrivemagParser::AddDrive(map<string, double> & pose, int motor, double pos)
 	string fedorDrive = MapDrive(motor);
 	if (fedorDrive != "")
 	{
-		//double deg = InvertDrive(motor, rad2deg(pos));
-		double deg = InvertDrive(motor, pos);
+		double deg = InvertDrive(motor, rad2deg(pos));
+		//double deg = InvertDrive(motor, pos);
 		pose[fedorDrive] = deg;
 	}
 
