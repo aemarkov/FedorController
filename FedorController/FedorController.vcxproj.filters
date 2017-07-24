@@ -113,5 +113,8 @@
     <ClInclude Include="Fedor\Data\SensorsData.h">
       <Filter>Fedor\Data</Filter>
     </ClInclude>
+    <ClInclude Include="DrivemagParser\Frame.h">
+      <Filter>DrivemagParser</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

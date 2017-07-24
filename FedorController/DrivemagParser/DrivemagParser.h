@@ -20,6 +20,7 @@
 #include <chrono>
 #include <Windows.h>
 
+#include "Frame.h"
 
 namespace FedorControl
 {
@@ -32,45 +33,69 @@ namespace FedorControl
 	{
 	public:
 
-		/**
-		Парсит и воспроизводит файл формата DRIVEMAG.
-		Эта функция блокирующая
+		using CallbackType = function<void(double, map<string, double>)>;
 
-		/param[in] filename Имя файла drivemag
-		/param[in] callback функция, вызываемая каждый кадр
+		/**
+			Создает новый парсер.
+			/param[in] isInterpolation Интепрполировать ли значения
+			/param[in] frameDt Шаг интерполяции
+			/param[in] Минимальное время между двумя кадрами, при котором будет
+			           включена интерполяция, иначе - без интерполяции
 		*/
-		static void PlayDrivemag(string filename, function<void(double, map<string, double>)> callback);
+		DrivemagParser(bool isInterpolation = false, int frameDt = 5, int minInterpolationDt = 20);
+
+		/**
+			Парсит файл формата DRIVEMAG.
+			/param[in] filename Имя файла drivemag
+		*/
+		void LoadDrivemag(string filename);
+
+		/**
+			/brief Плавно переходит в начальный фрейм
+			/param[in] Текущее положение приводов робота
+			/param[in] time Время, за которое надо перейти из текущего в начальную позу
+			/param[in] callback Функция, восппроизводящая позу
+		*/
+		void ToStart(map<string, double> currentPose, double time, CallbackType callback);
+
+		/**
+			/brief Воспроизводит считанный файл Drivemag.
+
+			Эта функция блокирующая и вернет управление, только
+			когда весь файл будет воспроизведен
+
+			/param[in] callback Функция, восппроизводящая позу
+		*/
+		void PlayDrivemag(CallbackType callback);
 
 	private:
 
-		static map<int, string> driveMap;			// Мапит названия двигателей
-		static map<int, bool> driveInvert;			// Какие оси надо инвертировать
+		static map<int, string> driveMap;							// Мапит названия двигателей
+		static map<int, bool> driveInvert;							// Какие оси надо инвертировать
 
-		static const int frameDt;					// Желаемая длительность фрейма для интерполяции (мс)
-		static const bool isInterpolation;
-		static const int minInterpolationDt;
+		int _frameDt;												// Желаемая длительность фрейма для интерполяции (мс)
+		bool _isInterpolation;
+		int _minInterpolationDt;
+		vector<Frame> _frames;										// Список кадров
+		chrono::time_point<chrono::steady_clock> _t0;				// Время начала выполнения
 
 		//Преобразует номер двигателя из Drivemag в название мотора Федра
-		static string MapDrive(int drive);
+		string MapDrive(int drive);
 
 		//Инвертирует ось
-		static double InvertDrive(int drive, double angle);
+		double InvertDrive(int drive, double angle);
 
 		//Добавляет мотор
-		static void AddDrive(map<string, double> & pose, int motor, double pos);
+		void AddDrive(map<string, double> & pose, int motor, double pos);
 
 		//Воспроизводит одну позу
-		static void RunSingle(map<string, double> poses, chrono::time_point<chrono::steady_clock> t0, int delay, function<void(double, map<string, double>)> callback);
+		void RunSingle(map<string, double> & poses,  int delay, CallbackType callback);
 
 		//Выполняет интерполяцию
-		static void Interpolate(map<string, double> fromPose, map<string, double> toPose, chrono::time_point<chrono::steady_clock> t0, int delay, function<void(double, map<string, double>)> callback);
+		void Interpolate(map<string, double> & fromPose, map<string, double> & toPose, int delay, CallbackType callback);
 
 		//Переводит радианы в градусы
-		static double rad2deg(double rad);
-
-		// Переключает позы
-		static void SwapPose(int & curPose);
-
+		double rad2deg(double rad);
 		
 	};
 }

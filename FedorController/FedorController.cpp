@@ -21,6 +21,7 @@ using namespace std;
 using namespace SocketLib;
 
 void PlayFrame(double t, map<string, double> & poses);
+void PlayFrame_ToStart(double t, map<string, double> & poses);
 
 Fedor* fedor;
 PlotLogger logger;
@@ -46,17 +47,33 @@ int main(int argc, char** argv)
 
 	logger.Begin("log.txt", ' ');
 
-	DrivemagParser::PlayDrivemag(filename, PlayFrame);
+	DrivemagParser parser(true, 5, 20);
+
+	cout << "Reading...\n";
+	parser.LoadDrivemag(filename);
+	
+
+	cout << "Playing...\n";
+	parser.ToStart(fedor->Robot().Motors().Posget(), 2, PlayFrame_ToStart);
+	parser.PlayDrivemag(PlayFrame);
+
 
 	fedor->Disconnect();
 	delete fedor;
 	return 0;
 }
 
+// Воспроизводит кадр и записывает лог
 void PlayFrame(double t, map<string, double> & poses)
 {
 	if (!logger.IsHeader())
 	{
+		/* 
+		Почему я инициализирую логгер тут?
+		Да потому что мне надо знать, какие двигатели присутствуют
+		в файле (poses)
+		*/
+
 		logger.AddTitle("Time");
 
 		for (auto & pos : poses)
@@ -90,8 +107,6 @@ void PlayFrame(double t, map<string, double> & poses)
 
 
 	fedor->Robot().Motors().Posset(poses);
-	auto delayStart = chrono::steady_clock::now();
-	chrono::duration<double> currentDelay;
 
 	logger.BeginFrame(t);
 
@@ -103,6 +118,7 @@ void PlayFrame(double t, map<string, double> & poses)
 	for (auto & pose : realPoses)
 		logger.AddValue(pose.first + "_real", pose.second);
 
+	
 	auto imu = fedor->Robot().Sensors().GetIMU();
 	logger.AddValue("Yaw", imu.Euler.x);
 	logger.AddValue("Pitch", imu.Euler.y);
@@ -125,8 +141,10 @@ void PlayFrame(double t, map<string, double> & poses)
 	logger.AddValue("L.FTS.Ankle_Tx", forceLeft.T.x);
 	logger.AddValue("L.FTS.Ankle_Ty", forceLeft.T.y);
 	logger.AddValue("L.FTS.Ankle_Tz", forceLeft.T.z);
+}
 
-	currentDelay = chrono::steady_clock::now() - delayStart;
-
-
+// Просто воспроизводит позы
+void PlayFrame_ToStart(double t, map<string, double> & poses)
+{
+	fedor->Robot().Motors().Posset(poses);
 }

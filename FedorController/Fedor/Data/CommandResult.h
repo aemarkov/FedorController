@@ -32,9 +32,10 @@ namespace FedorControl
 	{
 
 	public:
-
-		CommandResult();
+		
 		CommandResult(uint8_t* buffer, uint32_t length);
+		//CommandResult(const CommandResult & other);
+		//~CommandResult();
 
 		FedorResultCode Code();
 		uint8_t* Buffer();
@@ -42,6 +43,7 @@ namespace FedorControl
 		uint32_t Length();
 
 	private:
+		CommandResult();
 		uint8_t* _buffer;
 		uint32_t _bufferLength;
 

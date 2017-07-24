@@ -1,11 +1,11 @@
 ﻿#include "CommandResult.h"
 
+#include <iostream>
+
 using namespace FedorControl;
 
-FedorControl::CommandResult::CommandResult()
+CommandResult::CommandResult()
 {
-	_buffer = nullptr;
-	_bufferLength = 0;
 }
 
 CommandResult::CommandResult(uint8_t* buffer, uint32_t length)
@@ -13,6 +13,22 @@ CommandResult::CommandResult(uint8_t* buffer, uint32_t length)
 	_buffer = buffer;
 	_bufferLength = length;
 }
+
+
+
+/*CommandResult::CommandResult(const CommandResult & other)
+{
+	std::cout << "Copy constructor\n";
+	//Хз чем не угодил конструктор по-умолчанию, но в Release не работает адекватно
+	_buffer = other._buffer;
+	_bufferLength = other._bufferLength;
+}
+
+CommandResult::~CommandResult()
+{
+	std::cout << "Destructor\n";
+}*/
+
 
 FedorResultCode CommandResult::Code()
 {

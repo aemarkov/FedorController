@@ -35,7 +35,6 @@ std::map<std::string, double> FedorControl::MotorsGroup::Posget(std::vector<std:
 		cmd += *it + ";";
 
 	cmd += ":posget";
-
 	auto result = SendCommand(cmd);
 	if (result.Code() != SUCCESS_WITH_RESULT)
 	{
