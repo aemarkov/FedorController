@@ -36,6 +36,7 @@ namespace FedorControl
 		CommandResult(uint8_t* buffer, uint32_t length);
 		//CommandResult(const CommandResult & other);
 		//~CommandResult();
+		//CommandResult& operator=(const CommandResult& other);
 
 		FedorResultCode Code();
 		uint8_t* Buffer();

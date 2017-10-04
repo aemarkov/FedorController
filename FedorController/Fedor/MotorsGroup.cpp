@@ -97,7 +97,7 @@ std::map<std::string, double> FedorControl::MotorsGroup::Posget()
 std::vector<std::string> FedorControl::MotorsGroup::List()
 {
 	std::string cmd = Prefix() + "list";
-	auto result = SendCommand(cmd);
+	CommandResult result = SendCommand(cmd);
 	if (result.Code() != SUCCESS_WITH_RESULT)
 	{
 		//Ошибка: на эту команду должен быть ответ SUCCESS_WITH_RESULT

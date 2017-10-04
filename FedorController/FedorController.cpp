@@ -29,20 +29,22 @@ PlotLogger logger;
 
 int main(int argc, char** argv)
 {
-	if (argc != 2)
+	if (argc != 4)
 	{
 		cout << "Usage:\n";
-		cout << "FedorController <drivemag.txt>\n";
+		cout << "FedorController <drivemag.txt> ip port\n";
 		return -1;
 	}
 
 	char* filename = argv[1];
+	char* ip = argv[2];
+	int port = atoi(argv[3]);
 
 
 	Socket::Init();
 	fedor = new Fedor();
 	//fedor->Connect("79.170.167.30", 58099);
-	fedor->Connect("127.0.0.1", 10099);
+	fedor->Connect(ip, port);
 
 
 	logger.Begin("log.txt", ' ');
@@ -53,8 +55,10 @@ int main(int argc, char** argv)
 	parser.LoadDrivemag(filename);
 	
 
-	cout << "Playing...\n";
+	cout << "Moving to start position...\n";
 	parser.ToStart(fedor->Robot().Motors().Posget(), 2, PlayFrame_ToStart);
+
+	cout << "Playing...\n";
 	parser.PlayDrivemag(PlayFrame);
 
 

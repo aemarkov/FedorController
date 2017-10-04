@@ -70,11 +70,8 @@ CommandResult AbstractGroup::SendCommand(std::string command)
 
 const FedorControl::CommandResult &FedorControl::AbstractGroup::_SendCommand(std::string &command)
 {
-
 	int sended = _socket.Send((uint8_t*)command.c_str(), command.length());
-
 	int received = _socket.Recv(_recvBuffer, RECV_BUFFER_SIZE);
-
 	_recvBuffer[received] = 0;
 
 	CommandResult result(_recvBuffer, received);
@@ -85,7 +82,9 @@ const FedorControl::CommandResult &FedorControl::AbstractGroup::_SendCommand(std
 	if (result.Code() == SUCCESS_WITH_RESULT)
 	{
 		if (IsResultFormatCorrect(result))
+		{
 			return result;
+		}
 
 		//Статус успеха, но формат команды неверный
 		//TODO: Обработка ошибок

@@ -27,8 +27,17 @@ CommandResult::CommandResult(uint8_t* buffer, uint32_t length)
 CommandResult::~CommandResult()
 {
 	std::cout << "Destructor\n";
-}*/
+}
 
+
+CommandResult & FedorControl::CommandResult::operator=(const CommandResult & other)
+{
+	std::cout << "=\n";
+	_buffer = other._buffer;
+	_bufferLength = other._bufferLength;
+
+	return *this;
+}*/
 
 FedorResultCode CommandResult::Code()
 {
