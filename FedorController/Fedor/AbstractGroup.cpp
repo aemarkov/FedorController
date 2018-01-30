@@ -49,7 +49,7 @@ bool IsResultFormatCorrect(CommandResult & result)
 }
 
 //Отправка команды роботу
-CommandResult AbstractGroup::SendCommand(std::string command)
+CommandResult AbstractGroup::SendCommand(std::string command) const
 {
 	command += "\r\n";
 
@@ -68,7 +68,7 @@ CommandResult AbstractGroup::SendCommand(std::string command)
 	}
 }
 
-const FedorControl::CommandResult &FedorControl::AbstractGroup::_SendCommand(std::string &command)
+const FedorControl::CommandResult FedorControl::AbstractGroup::_SendCommand(std::string &command) const
 {
 	int sended = _socket.Send((uint8_t*)command.c_str(), command.length());
 	int received = _socket.Recv(_recvBuffer, RECV_BUFFER_SIZE);

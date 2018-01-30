@@ -1,12 +1,10 @@
 ﻿#include "CommandResult.h"
 
 #include <iostream>
+#include <regex>
 
 using namespace FedorControl;
 
-CommandResult::CommandResult()
-{
-}
 
 CommandResult::CommandResult(uint8_t* buffer, uint32_t length)
 {
@@ -14,19 +12,17 @@ CommandResult::CommandResult(uint8_t* buffer, uint32_t length)
 	_bufferLength = length;
 }
 
+/*CommandResult::~CommandResult()
+{
+	std::cout << "Destructor\n";
+}
 
-
-/*CommandResult::CommandResult(const CommandResult & other)
+CommandResult::CommandResult(const CommandResult & other)
 {
 	std::cout << "Copy constructor\n";
 	//Хз чем не угодил конструктор по-умолчанию, но в Release не работает адекватно
 	_buffer = other._buffer;
 	_bufferLength = other._bufferLength;
-}
-
-CommandResult::~CommandResult()
-{
-	std::cout << "Destructor\n";
 }
 
 

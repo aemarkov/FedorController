@@ -46,9 +46,9 @@ namespace FedorControl
 		/**
 			Отправляет команду роботу
 		*/
-		CommandResult SendCommand(std::string command);
+		CommandResult SendCommand(std::string command) const;
 
-		const FedorControl::CommandResult &_SendCommand(std::string &command);
+		const FedorControl::CommandResult _SendCommand(std::string &command) const;
 
 		/**
 			Нарезает строку на подстроки по разделителю
@@ -56,7 +56,7 @@ namespace FedorControl
 			\param separator Разделитель, по которому будет разрезана строка
 			\return Вектор подстрок
 		*/
-		std::vector<std::string> Slice(std::string str, char separator);
+		static std::vector<std::string> Slice(std::string str, char separator);
 
 		SocketLib::TcpClient & _socket;
 		AbstractGroup* _parent;

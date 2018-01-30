@@ -90,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DrivemagParser\DrivemagParser.cpp" />
+    <ClCompile Include="FedorClock.cpp" />
     <ClCompile Include="FedorController.cpp" />
     <ClCompile Include="Fedor\AbstractGroup.cpp" />
     <ClCompile Include="Fedor\Data\CommandResult.cpp" />
@@ -179,6 +180,7 @@
   <ItemGroup>
     <ClInclude Include="DrivemagParser\DrivemagParser.h" />
     <ClInclude Include="DrivemagParser\Frame.h" />
+    <ClInclude Include="FedorClock.h" />
     <ClInclude Include="FedorConsole.h" />
     <ClInclude Include="Fedor\AbstractGroup.h" />
     <ClInclude Include="Fedor\Data\CommandResult.h" />

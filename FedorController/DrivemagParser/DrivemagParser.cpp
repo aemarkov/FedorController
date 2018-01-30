@@ -50,11 +50,19 @@ map<int, bool> DrivemagParser::driveInvert = {
 };
 
 
-DrivemagParser::DrivemagParser(bool isInterpolation, int frameDt, int minInterpolationDt)
+DrivemagParser::DrivemagParser(bool isInterpolation, int frameDt, int minInterpolationDt, FedorClock& clock)
+	: _clock(clock)
 {
 	_frameDt = frameDt;
 	_isInterpolation = isInterpolation;
 	_minInterpolationDt = minInterpolationDt;
+
+	_hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+}
+
+DrivemagParser::~DrivemagParser()
+{
+	CloseHandle(_hTimer);
 }
 
 //Парсит файлы формата DRIVEMAG
@@ -97,7 +105,7 @@ void DrivemagParser::LoadDrivemag(string filename)
 		{
 			// Начался другой кадр, предыдущий завершился
 			frame.Time = lastTime;
-			_frames.push_back(frame);
+			Frames.push_back(frame);
 			frame.Pose.clear();
 		}
 
@@ -107,13 +115,14 @@ void DrivemagParser::LoadDrivemag(string filename)
 		{
 			//Последний кадр завершился
 			frame.Time = lastTime;
-			_frames.push_back(frame);
+			Frames.push_back(frame);
 		}
 
 		lastTime = time;
 	}
 
 	drivemag.close();
+	std::cout << Frames[Frames.size() - 1].Time;
 }
 
 
@@ -124,10 +133,9 @@ void FedorControl::DrivemagParser::ToStart(map<string, double> currentPose, doub
 	if (callback == nullptr)
 		throw invalid_argument("Invalid callback");
 
-	_t0 = chrono::steady_clock::now();
-	Interpolate(currentPose, _frames[0].Pose, time * 1000.0, callback);
+	setTimer(0);
+	Interpolate(currentPose, Frames[0].Pose, time * 1000.0, callback);
 }
-
 
 
 // Воспроизводит считанный файл Drivemag
@@ -136,12 +144,12 @@ void FedorControl::DrivemagParser::PlayDrivemag(CallbackType callback)
 	if (callback == nullptr)
 		throw invalid_argument("Invalid callback");
 
-	_t0 = chrono::steady_clock::now();
+	setTimer(0);
 
-	for (int curFrame = 0; curFrame < _frames.size() - 1; curFrame++)
+	for (int curFrame = 0; curFrame < Frames.size() - 1; curFrame++)
 	{
-		Frame & fromFrame = _frames[curFrame];
-		Frame & toFrame = _frames[curFrame + 1];
+		Frame & fromFrame = Frames[curFrame];
+		Frame & toFrame = Frames[curFrame + 1];
 
 		int dT = (toFrame.Time - fromFrame.Time) * 1000;
 
@@ -154,15 +162,15 @@ void FedorControl::DrivemagParser::PlayDrivemag(CallbackType callback)
 		{
 			// Мгновенное выполнение
 			// Для первого кадра надо выполнить два - "to" и
-			// "from", а дальше только "from", потому что "to" уже
+			// "from", а дальше только "to", потому что "from" уже
 			// выполнен на предыдущей итерации
 
 			if (curFrame == 0)
 			{
-				RunSingle(fromFrame.Pose, dT, callback);
+				RunSingle(fromFrame.Pose, dT, fromFrame.Time, callback);
 			}
 
-			RunSingle(toFrame.Pose, dT, callback);
+			RunSingle(toFrame.Pose, dT, toFrame.Time, callback);
 		}
 	}
 }
@@ -205,12 +213,15 @@ void DrivemagParser::AddDrive(map<string, double> & pose, int motor, double pos)
 }
 
 //Воспроизводит одну позу
-void DrivemagParser::RunSingle(map<string, double>& pose, int delay, CallbackType callback)
+void DrivemagParser::RunSingle(map<string, double>& pose, int delay, double origTime, CallbackType callback)
 {
-	int t = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - _t0).count();
+	//std::cout << origTime << std::endl;
+	WaitForSingleObject(_hTimer, INFINITE);
+	setTimer(delay);
 
+	auto t = _clock.GetTime();
+	//callback(chrono::duration<float>(origTime), pose);		// Для записи времен из драйвмага
 	callback(t, pose);
-	Sleep(delay);
 }
 
 //Производит интерполяцию
@@ -229,6 +240,11 @@ void DrivemagParser::Interpolate(map<string, double> & fromPose, map<string, dou
 		for (auto & m : fromPose)
 		{
 			double from = m.second;
+
+			if (toPose.find(m.first) == toPose.end())
+				continue;
+
+
 			double to = toPose[m.first];
 			double interpolated = (to - from) * t / (double)delay + from;
 
@@ -239,7 +255,9 @@ void DrivemagParser::Interpolate(map<string, double> & fromPose, map<string, dou
 		if (i == 2)
 			i = 0;
 
-		RunSingle(interpolatedPoses, _frameDt, callback);
+		// Тут вместо настоящего времени из драйвмага передаем реальное.
+		// Щито поделать
+		RunSingle(interpolatedPoses, _frameDt, t/1000.0, callback);
 		interpolatedPoses.clear();
 
 
@@ -250,4 +268,12 @@ void DrivemagParser::Interpolate(map<string, double> & fromPose, map<string, dou
 double DrivemagParser::rad2deg(double rad)
 {
 	return rad / M_PI * 180.0;
+}
+
+// Устанавливает задержку таймера (мс)
+void DrivemagParser::setTimer(int delay)
+{
+	LARGE_INTEGER lDelay;
+	lDelay.QuadPart = -delay * 10000;
+	SetWaitableTimer(_hTimer, &lDelay, 0, NULL, NULL, FALSE);
 }

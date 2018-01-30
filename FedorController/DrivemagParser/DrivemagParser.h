@@ -21,6 +21,7 @@
 #include <Windows.h>
 
 #include "Frame.h"
+#include <FedorClock.h>
 
 namespace FedorControl
 {
@@ -33,7 +34,10 @@ namespace FedorControl
 	{
 	public:
 
-		using CallbackType = function<void(double, map<string, double>)>;
+		using CallbackType = function<void(chrono::duration<float>, map<string, double>)>;
+
+		// Список кадров
+		vector<Frame> Frames;
 
 		/**
 			Создает новый парсер.
@@ -42,7 +46,8 @@ namespace FedorControl
 			/param[in] Минимальное время между двумя кадрами, при котором будет
 			           включена интерполяция, иначе - без интерполяции
 		*/
-		DrivemagParser(bool isInterpolation = false, int frameDt = 5, int minInterpolationDt = 20);
+		DrivemagParser(bool isInterpolation = false, int frameDt = 5, int minInterpolationDt = 20, FedorClock& clock = FedorClock());
+		~DrivemagParser();
 
 		/**
 			Парсит файл формата DRIVEMAG.
@@ -76,8 +81,9 @@ namespace FedorControl
 		int _frameDt;												// Желаемая длительность фрейма для интерполяции (мс)
 		bool _isInterpolation;
 		int _minInterpolationDt;
-		vector<Frame> _frames;										// Список кадров
-		chrono::time_point<chrono::steady_clock> _t0;				// Время начала выполнения
+
+		FedorClock& _clock;
+		HANDLE _hTimer;
 
 		//Преобразует номер двигателя из Drivemag в название мотора Федра
 		string MapDrive(int drive);
@@ -89,13 +95,16 @@ namespace FedorControl
 		void AddDrive(map<string, double> & pose, int motor, double pos);
 
 		//Воспроизводит одну позу
-		void RunSingle(map<string, double> & poses,  int delay, CallbackType callback);
+		void RunSingle(map<string, double>& pose, int delay, double origTime, CallbackType callback);
 
 		//Выполняет интерполяцию
 		void Interpolate(map<string, double> & fromPose, map<string, double> & toPose, int delay, CallbackType callback);
 
 		//Переводит радианы в градусы
 		double rad2deg(double rad);
+
+		// Устанавливает задержку таймера (мс)
+		void setTimer(int delay);
 		
 	};
 }

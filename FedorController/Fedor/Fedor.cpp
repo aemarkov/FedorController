@@ -13,6 +13,7 @@ FedorControl::Fedor::~Fedor()
 
 void FedorControl::Fedor::Connect(const char * ip, int port)
 {
+	_ip = ip;
 	_socket.Connect(ip, port);
 }
 
@@ -29,4 +30,15 @@ RobotGroup & FedorControl::Fedor::Robot()
 VersionGroup & FedorControl::Fedor::Version()
 {
 	return _version;
+}
+
+void Fedor::ResetScene()
+{
+	SocketLib::UdpSocket socket;
+	socket.Connect(_ip.c_str(), 10098);
+
+	std::string command = "scene:reset\r\n";
+	int a = socket.Send((uint8_t*)command.c_str(), command.length());
+
+	socket.Close();
 }

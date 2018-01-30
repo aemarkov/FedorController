@@ -42,6 +42,12 @@ namespace FedorControl
 		*/
 		VersionGroup & Version();
 
+
+		/**
+			\brief Перезагружает сцену
+		 */
+		void ResetScene();
+
 	private:
 
 		/*Возможность отстрелить ногу:
@@ -52,6 +58,7 @@ namespace FedorControl
 		RobotGroup _robot;
 		VersionGroup _version;	
 
+		std::string _ip;
 	};
 }
 

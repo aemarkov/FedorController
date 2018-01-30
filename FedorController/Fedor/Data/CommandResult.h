@@ -28,7 +28,7 @@ namespace FedorControl
 	Обертка вокруг буфера результата, позволяюшая выделить из него
 	код статуса и сами данные
 	*/
-	class CommandResult
+	struct CommandResult
 	{
 
 	public:
@@ -44,7 +44,7 @@ namespace FedorControl
 		uint32_t Length();
 
 	private:
-		CommandResult();
+		//CommandResult();
 		uint8_t* _buffer;
 		uint32_t _bufferLength;
 

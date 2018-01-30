@@ -66,6 +66,9 @@
     <ClCompile Include="PlotLogger\PlotLogger.cpp">
       <Filter>PlotLogger</Filter>
     </ClCompile>
+    <ClCompile Include="FedorClock.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SocketLib\SocketLib.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="DrivemagParser\Frame.h">
       <Filter>DrivemagParser</Filter>
+    </ClInclude>
+    <ClInclude Include="FedorClock.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

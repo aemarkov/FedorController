@@ -1,4 +1,5 @@
 ﻿#include "SocketException.h"
+#include <string>
 
 using namespace SocketLib;
 
@@ -6,7 +7,7 @@ SocketException::SocketException()
 {
 }
 
-SocketException::SocketException(uint32_t error)
+SocketException::SocketException(uint32_t error) : exception(("Error code: " + std::to_string(error)).c_str())
 {
 	_errorCode = error;
 }
