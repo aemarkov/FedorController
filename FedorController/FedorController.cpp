@@ -10,7 +10,8 @@
 #include <chrono>
 
 #include <Fedor\Fedor.h>
-#include <DrivemagParser\DrivemagParser.h>
+#include <Drivemag\DrivemagParser.h>
+#include <Drivemag\DrivemagPlayer.h>
 #include <PlotLogger\PlotLogger.h>
 #include <FedorClock.h>
 
@@ -25,13 +26,13 @@ void PlayFrame(chrono::duration<float> t, map<string, double> & poses);
 void PlayFrame_ToStart(chrono::duration<float> t, map<string, double> & poses);
 
 
-void CreateLoggerHeader(map<string, double>& poses);
+void CreateLoggerHeader(Pose& pose);
 void LogIMU();
 void LogForces();
-void LogStay(long milliseconds);
+void LogStay(long milliseconds, Pose& stayingPose);
 
 FedorClock fedorClock;
-DrivemagParser parser(true, 5, 20, fedorClock);
+DrivemagPlayer player(true, 5, 20, fedorClock);
 Fedor* fedor;
 PlotLogger logger;
 
@@ -80,7 +81,7 @@ int main(int argc, char** argv)
 	
 
 	cout << "Reading...\n";
-	parser.LoadDrivemag(drivemagFilename);
+	auto dm = DrivemagParser::LoadDrivemag(drivemagFilename);
 
 	if (!noLog)
 	{
@@ -88,7 +89,7 @@ int main(int argc, char** argv)
 		std::experimental::filesystem::path drivemag(drivemagFilename);
 		auto logFilename = drivemag.parent_path() / experimental::filesystem::path("log_" + drivemag.filename().string());
 		logger.Begin(logFilename.string(), ' ');
-		CreateLoggerHeader(parser.Frames[0].Pose);
+		CreateLoggerHeader(dm[0].Pose);
 	}	
 
 
@@ -97,13 +98,13 @@ int main(int argc, char** argv)
 	cout << "Logging...\n";
 	fedorClock.ResetClock();
 	float a = fedorClock.GetTime().count();
-	LogStay(10000);
+	LogStay(10000, dm[0].Pose);
 
 	cout << "Moving to start position...\n";
-	parser.ToStart(fedor->Robot().Motors().Posget(), 2, PlayFrame);
+	player.ToStart(fedor->Robot().Motors().Posget(), dm[0].Pose, 2, PlayFrame);
 
 	cout << "Playing...\n";
-	parser.PlayDrivemag(PlayFrame);
+	player.PlayDrivemag(dm, PlayFrame);
 
 
 	fedor->Disconnect();
@@ -112,7 +113,8 @@ int main(int argc, char** argv)
 }
 
 
-void LogStay(long milliseconds)
+// Записывает в лог неподвижного робота в течении заданного времени
+void LogStay(long milliseconds, Pose& stayingnPose)
 {
 	auto t0 = chrono::steady_clock::now();
 	do
@@ -122,7 +124,7 @@ void LogStay(long milliseconds)
 
 		auto realPoses = fedor->Robot().Motors().Posget();
 
-		for (auto & pos : parser.Frames[0].Pose)
+		for (auto & pos : stayingnPose)
 			logger.AddValue(pos.first, realPoses[pos.first]);
 
 		for (auto & pose : realPoses)
@@ -136,22 +138,22 @@ void LogStay(long milliseconds)
 }
 
 // Воспроизводит кадр и записывает лог
-void PlayFrame(chrono::duration<float> t, map<string, double> & poses)
+void PlayFrame(chrono::duration<float> t, Pose & pose)
 {
-	fedor->Robot().Motors().Posset(poses);
+	fedor->Robot().Motors().Posset(pose);
 
 	if (!noLog)
 	{
 		float tt = t.count();
 		logger.BeginFrame(tt);
 
-		for (auto & pos : poses)
-			logger.AddValue(pos);
-
 		auto realPoses = fedor->Robot().Motors().Posget();
 
-		for (auto & pose : realPoses)
-			logger.AddValue(pose.first + "_real", pose.second);
+		for (auto & motor : pose)
+			logger.AddValue(motor);		
+
+		for (auto & motor : realPoses)		
+			logger.AddValue(motor.first + "_real", motor.second);		
 
 		LogIMU();
 		LogForces();
@@ -165,17 +167,17 @@ void PlayFrame_ToStart(chrono::duration<float>  t, map<string, double> & poses)
 }
 
 
-void CreateLoggerHeader(map<string, double>& poses)
+void CreateLoggerHeader(Pose& pose)
 {
 	/*
 	Почему я инициализирую логгер тут?
 	Да потому что мне надо знать, какие двигатели присутствуют
-	в файле (poses)
+	в файле (pose)
 	*/
 
 	logger.AddTitle("Time");
 
-	for (auto & pos : poses)
+	for (auto & pos : pose)
 		logger.AddTitle(pos.first);
 
 	auto motors = fedor->Robot().Motors().List();

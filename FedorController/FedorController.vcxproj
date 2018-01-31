@@ -163,7 +163,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DrivemagParser\DrivemagParser.cpp" />
+    <ClCompile Include="Drivemag\DrivemagParser.cpp" />
+    <ClCompile Include="Drivemag\DrivemagPlayer.cpp" />
     <ClCompile Include="FedorClock.cpp" />
     <ClCompile Include="FedorController.cpp" />
     <ClCompile Include="Fedor\AbstractGroup.cpp" />
@@ -178,8 +179,10 @@
     <ClCompile Include="SocketLib\SocketLib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DrivemagParser\DrivemagParser.h" />
-    <ClInclude Include="DrivemagParser\Frame.h" />
+    <ClInclude Include="Drivemag\Drivemag.h" />
+    <ClInclude Include="Drivemag\DrivemagParser.h" />
+    <ClInclude Include="Drivemag\DrivemagPlayer.h" />
+    <ClInclude Include="Drivemag\Frame.h" />
     <ClInclude Include="FedorClock.h" />
     <ClInclude Include="FedorConsole.h" />
     <ClInclude Include="Fedor\AbstractGroup.h" />

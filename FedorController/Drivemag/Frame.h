@@ -6,11 +6,12 @@
 namespace FedorControl
 {
 	using namespace std;
+	using Pose = std::map<std::string, double>;
 
 	class Frame
 	{
 	public:
 		double Time;
-		map<string, double> Pose;
+		Pose Pose;
 	};
 }

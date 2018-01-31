@@ -22,11 +22,11 @@
     <Filter Include="Fedor\Data">
       <UniqueIdentifier>{1ca6c974-f99e-4d50-8e4b-231fbe96beef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DrivemagParser">
-      <UniqueIdentifier>{3a1b1d68-4363-4a7d-82a7-bae012232be3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PlotLogger">
       <UniqueIdentifier>{eb9ad154-f6a0-4404-971d-a3334e8c3392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drivemag">
+      <UniqueIdentifier>{3a1b1d68-4363-4a7d-82a7-bae012232be3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,14 +60,17 @@
     <ClCompile Include="Fedor\Data\CommandResult.cpp">
       <Filter>Fedor\Data</Filter>
     </ClCompile>
-    <ClCompile Include="DrivemagParser\DrivemagParser.cpp">
-      <Filter>DrivemagParser</Filter>
-    </ClCompile>
     <ClCompile Include="PlotLogger\PlotLogger.cpp">
       <Filter>PlotLogger</Filter>
     </ClCompile>
     <ClCompile Include="FedorClock.cpp">
       <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="Drivemag\DrivemagParser.cpp">
+      <Filter>Drivemag</Filter>
+    </ClCompile>
+    <ClCompile Include="Drivemag\DrivemagPlayer.cpp">
+      <Filter>Drivemag</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,9 +101,6 @@
     <ClInclude Include="Fedor\Data\CommandResult.h">
       <Filter>Fedor\Data</Filter>
     </ClInclude>
-    <ClInclude Include="DrivemagParser\DrivemagParser.h">
-      <Filter>DrivemagParser</Filter>
-    </ClInclude>
     <ClInclude Include="FedorConsole.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
@@ -116,11 +116,20 @@
     <ClInclude Include="Fedor\Data\SensorsData.h">
       <Filter>Fedor\Data</Filter>
     </ClInclude>
-    <ClInclude Include="DrivemagParser\Frame.h">
-      <Filter>DrivemagParser</Filter>
-    </ClInclude>
     <ClInclude Include="FedorClock.h">
       <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Drivemag\DrivemagParser.h">
+      <Filter>Drivemag</Filter>
+    </ClInclude>
+    <ClInclude Include="Drivemag\DrivemagPlayer.h">
+      <Filter>Drivemag</Filter>
+    </ClInclude>
+    <ClInclude Include="Drivemag\Frame.h">
+      <Filter>Drivemag</Filter>
+    </ClInclude>
+    <ClInclude Include="Drivemag\Drivemag.h">
+      <Filter>Drivemag</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
