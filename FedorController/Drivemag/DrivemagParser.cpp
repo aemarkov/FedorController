@@ -41,10 +41,10 @@ map<int, bool> DrivemagParser::driveInvert = {
 	{ 11, true },
 	{ 12, true },
 	{ 19, true },
-	{ 20, false },
+	{ 20, true },
 	{ 21, false },
 	{ 35, false },
-	{ 36, false },
+	{ 36, true },
 	{ 37, false },
 	{ 49, true }
 };
@@ -65,6 +65,8 @@ map<int, bool> DrivemagParser::driveInvert = {
 */
 vector<Frame> DrivemagParser::LoadDrivemag(string filename)
 {
+	cout << "Reading " << filename << "..." << endl;
+
 	vector<Frame> drivemag;
 
 	if (!experimental::filesystem::exists(filename))

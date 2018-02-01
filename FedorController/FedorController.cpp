@@ -68,7 +68,6 @@ int main(int argc, char** argv)
 
 	try
 	{
-		//fedor->Connect("79.170.167.30", 58099);
 		fedor->Connect(ip, port);
 	}
 	catch(exception ex)
@@ -77,35 +76,35 @@ int main(int argc, char** argv)
 		cout << ex.what() << "\n";
 		return -1;
 	}
-
 	
 
-	cout << "Reading...\n";
-	auto dm = DrivemagParser::LoadDrivemag(drivemagFilename);
+
+	//auto dm1 = DrivemagParser::LoadDrivemag("D:\\Programming\\_PROJECTS\\Fedor\\FRUND\\31.01.2018\\DRIVEMAG1.TXT");
+	auto dm2 = DrivemagParser::LoadDrivemag("D:\\Programming\\_PROJECTS\\Fedor\\FRUND\\31.01.2018\\DRIVEMAG2.TXT");
 
 	if (!noLog)
-	{
-		// имя файла лога - такое же, как у драйвмага, только с припиской log_
-		std::experimental::filesystem::path drivemag(drivemagFilename);
-		auto logFilename = drivemag.parent_path() / experimental::filesystem::path("log_" + drivemag.filename().string());
-		logger.Begin(logFilename.string(), ' ');
-		CreateLoggerHeader(dm[0].Pose);
+	{		
+		logger.Begin("D:\\Programming\\_PROJECTS\\Fedor\\FRUND\\31.01.2018\\log.txt", ' ');
+		CreateLoggerHeader(dm2[0].Pose);
 	}	
 
 
 	fedor->ResetScene();
-	Sleep(500);
-	cout << "Logging...\n";
+	Sleep(500);	
+	fedor->Robot().Motors().Posset({ { "Neck", 90 },{ "HeadF", 90 } });
 	fedorClock.ResetClock();
-	float a = fedorClock.GetTime().count();
-	LogStay(10000, dm[0].Pose);
 
 	cout << "Moving to start position...\n";
-	player.ToStart(fedor->Robot().Motors().Posget(), dm[0].Pose, 2, PlayFrame);
+	player.ToStart(fedor->Robot().Motors().Posget(), dm2[0].Pose, 2, PlayFrame);
 
-	cout << "Playing...\n";
-	player.PlayDrivemag(dm, PlayFrame);
+	//cout << "Playing DRIVEMAG 1...\n";
+	//player.PlayDrivemag(dm1, PlayFrame);
+	
+	//cout << "Movingn 1 -> 2...\n";
+	//player.ToStart(fedor->Robot().Motors().Posget(), dm2[0].Pose, 2, PlayFrame);
 
+	cout << "Playing DRIVEMAG 2...\n";
+	player.PlayDrivemag(dm2, PlayFrame);
 
 	fedor->Disconnect();
 	delete fedor;
