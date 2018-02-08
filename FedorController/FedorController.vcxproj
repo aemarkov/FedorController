@@ -179,6 +179,7 @@
     <ClCompile Include="SocketLib\SocketLib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CLI.hpp" />
     <ClInclude Include="Drivemag\Drivemag.h" />
     <ClInclude Include="Drivemag\DrivemagParser.h" />
     <ClInclude Include="Drivemag\DrivemagPlayer.h" />

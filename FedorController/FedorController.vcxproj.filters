@@ -131,5 +131,8 @@
     <ClInclude Include="Drivemag\Drivemag.h">
       <Filter>Drivemag</Filter>
     </ClInclude>
+    <ClInclude Include="CLI.hpp">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

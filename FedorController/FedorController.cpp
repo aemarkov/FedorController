@@ -14,7 +14,7 @@
 #include <Drivemag\DrivemagPlayer.h>
 #include <PlotLogger\PlotLogger.h>
 #include <FedorClock.h>
-
+#include <CLI11.hpp>
 #include <filesystem>
 
 
@@ -22,14 +22,14 @@ using namespace FedorControl;
 using namespace std;
 using namespace SocketLib;
 
+void PlayDrivemags(vector<vector<Frame>> drivemags);
+void LogStay(long milliseconds, Pose& stayingPose);
 void PlayFrame(chrono::duration<float> t, map<string, double> & poses);
 void PlayFrame_ToStart(chrono::duration<float> t, map<string, double> & poses);
-
-
 void CreateLoggerHeader(Pose& pose);
 void LogIMU();
 void LogForces();
-void LogStay(long milliseconds, Pose& stayingPose);
+string GetLogFilename(string drivemagFilename);
 
 FedorClock fedorClock;
 DrivemagPlayer player(true, 5, 20, fedorClock);
@@ -38,37 +38,29 @@ PlotLogger logger;
 
 bool noLog = false;
 
+
 int main(int argc, char** argv)
 {
-	if (argc < 4)
-	{
-		cout << "Usage:\n";
-		cout << "FedorController <drivemag.txt> ip port [-nolog]\n";
-		return -1;
-	}
+	string ip = "127.0.0.1";
+	int port = 10099;
+	vector<string> drivemags_filenames;
+	string log_name;
 
-	if(argc == 5)
-	{
-		if(strcmp(argv[4], "-nolog")!=0)
-		{
-			cout << "Invalid argument " << argv[4] << "\n";
-			return -1;
-		}
+	CLI::App app{ "Robot F.E.D.O.R. controll software" };
+	app.add_option("-d,--drivemag", drivemags_filenames, "List of DRIVEMAG filenames")->required()->check(CLI::ExistingFile);
+	app.add_option("-i,--ip", ip, "F.E.D.O.R. IP address");
+	app.add_option("-p,--port", port, "F.E.D.O.R. port");
+	app.add_option("-l,--log", log_name, "Log filename");
+	app.add_flag("--no-log", noLog, "Disable logging");
 
-		noLog = true;
-	}
-
-	char* drivemagFilename = argv[1];
-	char* ip = argv[2];
-	int port = atoi(argv[3]);
-
+	CLI11_PARSE(app, argc, argv);
 
 	Socket::Init();
 	fedor = new Fedor();
 
 	try
 	{
-		fedor->Connect(ip, port);
+		fedor->Connect(ip.c_str(), port);
 	}
 	catch(exception ex)
 	{
@@ -77,40 +69,45 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	
-
-
-	//auto dm1 = DrivemagParser::LoadDrivemag("D:\\Programming\\_PROJECTS\\Fedor\\FRUND\\31.01.2018\\DRIVEMAG1.TXT");
-	auto dm2 = DrivemagParser::LoadDrivemag("D:\\Programming\\_PROJECTS\\Fedor\\FRUND\\31.01.2018\\DRIVEMAG2.TXT");
+	vector<vector<Frame>> drivemags;
+	for (string filename : drivemags_filenames)
+		drivemags.push_back(DrivemagParser::LoadDrivemag(filename));
 
 	if (!noLog)
 	{		
-		logger.Begin("D:\\Programming\\_PROJECTS\\Fedor\\FRUND\\31.01.2018\\log.txt", ' ');
-		CreateLoggerHeader(dm2[0].Pose);
-	}	
+		if (log_name.empty())
+			log_name = GetLogFilename(drivemags_filenames[0]);
 
+		logger.Begin(log_name, ' ');
+		CreateLoggerHeader(drivemags[0][0].Pose);
+	}	
 
 	fedor->ResetScene();
 	Sleep(500);	
-	fedor->Robot().Motors().Posset({ { "Neck", 90 },{ "HeadF", 90 } });
-	fedorClock.ResetClock();
 
-	cout << "Moving to start position...\n";
-	player.ToStart(fedor->Robot().Motors().Posget(), dm2[0].Pose, 2, PlayFrame);
-
-	//cout << "Playing DRIVEMAG 1...\n";
-	//player.PlayDrivemag(dm1, PlayFrame);
-	
-	//cout << "Movingn 1 -> 2...\n";
-	//player.ToStart(fedor->Robot().Motors().Posget(), dm2[0].Pose, 2, PlayFrame);
-
-	cout << "Playing DRIVEMAG 2...\n";
-	player.PlayDrivemag(dm2, PlayFrame);
+	PlayDrivemags(drivemags);
 
 	fedor->Disconnect();
 	delete fedor;
 	return 0;
 }
 
+void PlayDrivemags(vector<vector<Frame>> drivemags)
+{
+	cout << "Moving to start position...\n";
+	player.ToStart(fedor->Robot().Motors().Posget(), drivemags[0][0].Pose, 2, PlayFrame);
+
+	for (int i = 0; i<drivemags.size() - 1; i++)
+	{
+		cout << "Playing DRIVEMAG " << i << "...\n";
+		player.PlayDrivemag(drivemags[i], PlayFrame);
+		cout << "Moving to next DRIVEMAG...\n";
+		player.ToStart(fedor->Robot().Motors().Posget(), drivemags[i + 1][0].Pose, 2, PlayFrame);
+	}
+
+	cout << "Playing DRIVEMAG " << drivemags.size() - 1 << "...\n";
+	player.PlayDrivemag(drivemags[drivemags.size() - 1], PlayFrame);
+}
 
 // Записывает в лог неподвижного робота в течении заданного времени
 void LogStay(long milliseconds, Pose& stayingnPose)
@@ -242,4 +239,12 @@ void LogForces()
 
 	logger.AddValue("ZMP.X", ty / fz);
 	logger.AddValue("ZMP.Y", tx / fz);
+}
+
+// По имени файла генерирует имя лога
+string GetLogFilename(string drivemagFilename)
+{
+	std::experimental::filesystem::path drivemag(drivemagFilename);
+	auto logFilename = drivemag.parent_path() / experimental::filesystem::path("log_" + drivemag.filename().string());
+	return logFilename.string();
 }
