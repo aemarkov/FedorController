@@ -31,14 +31,14 @@ map<int, bool> DrivemagParser::driveInvert = {
 	{ 1, true },
 	{ 2, true },
 	{ 3, true },
-	{ 4, true },
-	{ 5, true },
+	{ 4, false }, //true
+	{ 5, false }, //true
 	{ 6, false },
 	{ 7, false },
 	{ 8, true },
 	{ 9, true },
-	{ 10, true },
-	{ 11, true },
+	{ 10, false }, //true
+	{ 11, false },  //true
 	{ 12, true },
 	{ 19, true },
 	{ 20, true },
@@ -63,7 +63,7 @@ map<int, bool> DrivemagParser::driveInvert = {
 ...                                               |
 номер_привода_n время_2 угол какая-то дичь дичь   /
 */
-vector<Frame> DrivemagParser::LoadDrivemag(string filename)
+vector<Frame> DrivemagParser::LoadDrivemag(string filename, bool isDegrees)
 {
 	cout << "Reading " << filename << "..." << endl;
 
@@ -99,7 +99,7 @@ vector<Frame> DrivemagParser::LoadDrivemag(string filename)
 			frame.Pose.clear();
 		}
 
-		AddDrive(frame.Pose, motor, pos);
+		AddDrive(frame.Pose, motor, pos, isDegrees);
 
 		if (file.eof())
 		{
@@ -140,13 +140,14 @@ double DrivemagParser::InvertDrive(int drive, double angle)
 }
 
 //Добавляет мотор
-void DrivemagParser::AddDrive(map<string, double> & pose, int motor, double pos)
+void DrivemagParser::AddDrive(map<string, double> & pose, int motor, double pos, bool isDegrees)
 {
 	// Добавляем мотор в текущий буфер
 	string fedorDrive = MapDrive(motor);
 	if (fedorDrive != "")
 	{
-		double deg = InvertDrive(motor, rad2deg(pos));
+		double angle = isDegrees ? pos : rad2deg(pos);
+		double deg = InvertDrive(motor, angle);
 		//double deg = InvertDrive(motor, pos);
 		pose.insert(pair<string, double>(fedorDrive, deg));
 	}

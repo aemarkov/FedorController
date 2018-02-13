@@ -22,7 +22,7 @@ using namespace FedorControl;
 using namespace std;
 using namespace SocketLib;
 
-void PlayDrivemags(vector<vector<Frame>> drivemags);
+void PlayDrivemags(vector<vector<Frame>> drivemags, double poseTransitionTime);
 void LogStay(long milliseconds, Pose& stayingPose);
 void PlayFrame(chrono::duration<float> t, map<string, double> & poses);
 void PlayFrame_ToStart(chrono::duration<float> t, map<string, double> & poses);
@@ -45,13 +45,19 @@ int main(int argc, char** argv)
 	int port = 10099;
 	vector<string> drivemags_filenames;
 	string log_name;
+	bool noResetScene = false;
+	double poseTransitionTime = 2.0;
+	bool isDegrees = false;
 
 	CLI::App app{ "Robot F.E.D.O.R. controll software" };
 	app.add_option("-d,--drivemag", drivemags_filenames, "List of DRIVEMAG filenames")->required()->check(CLI::ExistingFile);
 	app.add_option("-i,--ip", ip, "F.E.D.O.R. IP address");
 	app.add_option("-p,--port", port, "F.E.D.O.R. port");
 	app.add_option("-l,--log", log_name, "Log filename");
+	app.add_option("-t,--transition", poseTransitionTime, "Pose to pose transitionTime");
 	app.add_flag("--no-log", noLog, "Disable logging");
+	app.add_flag("--no-reset", noResetScene, "Disable scene reset before playing");
+	app.add_flag("--deg", isDegrees, "Disable scene reset before playing");
 
 	CLI11_PARSE(app, argc, argv);
 
@@ -71,7 +77,7 @@ int main(int argc, char** argv)
 	
 	vector<vector<Frame>> drivemags;
 	for (string filename : drivemags_filenames)
-		drivemags.push_back(DrivemagParser::LoadDrivemag(filename));
+		drivemags.push_back(DrivemagParser::LoadDrivemag(filename, isDegrees));
 
 	if (!noLog)
 	{		
@@ -82,27 +88,30 @@ int main(int argc, char** argv)
 		CreateLoggerHeader(drivemags[0][0].Pose);
 	}	
 
-	fedor->ResetScene();
-	Sleep(500);	
+	if (!noResetScene)
+	{
+		fedor->ResetScene();
+		Sleep(500);
+	}	
 
-	PlayDrivemags(drivemags);
+	PlayDrivemags(drivemags, poseTransitionTime);
 
 	fedor->Disconnect();
 	delete fedor;
 	return 0;
 }
 
-void PlayDrivemags(vector<vector<Frame>> drivemags)
+void PlayDrivemags(vector<vector<Frame>> drivemags, double poseTransitionTime)
 {
 	cout << "Moving to start position...\n";
-	player.ToStart(fedor->Robot().Motors().Posget(), drivemags[0][0].Pose, 2, PlayFrame);
+	player.ToStart(fedor->Robot().Motors().Posget(), drivemags[0][0].Pose, poseTransitionTime, PlayFrame);
 
 	for (int i = 0; i<drivemags.size() - 1; i++)
 	{
 		cout << "Playing DRIVEMAG " << i << "...\n";
 		player.PlayDrivemag(drivemags[i], PlayFrame);
 		cout << "Moving to next DRIVEMAG...\n";
-		player.ToStart(fedor->Robot().Motors().Posget(), drivemags[i + 1][0].Pose, 2, PlayFrame);
+		player.ToStart(fedor->Robot().Motors().Posget(), drivemags[i + 1][0].Pose, poseTransitionTime, PlayFrame);
 	}
 
 	cout << "Playing DRIVEMAG " << drivemags.size() - 1 << "...\n";

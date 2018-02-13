@@ -39,7 +39,7 @@ namespace FedorControl
 			Парсит файл формата DRIVEMAG.
 			/param[in] filename Имя файла drivemag
 		*/
-		static vector<Frame> LoadDrivemag(string filename);
+		static vector<Frame> LoadDrivemag(string filename, bool isDegrees=false);
 
 	private:
 
@@ -54,7 +54,7 @@ namespace FedorControl
 		static double InvertDrive(int drive, double angle);
 
 		//Добавляет мотор
-		static void AddDrive(map<string, double> & pose, int motor, double pos);
+		static void AddDrive(map<string, double> & pose, int motor, double pos, bool isDegrees);
 
 		//Переводит радианы в градусы
 		static double rad2deg(double rad);
